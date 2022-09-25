@@ -1,17 +1,22 @@
 import { GetServerSidePropsContext } from 'next'
-import client from '../ApiClient'
+import { serverDataTransform } from 'utils/dataTransform'
+import client from '../initPocketBase'
 
-export async function getServerSidePropsPageIndex({
-	locale
-}: GetServerSidePropsContext) {
-	const data = await client.records.getOne('mangas', 'iaxsr8kct3f26ww', {
-		expand: 'upload_by'
-	})
+export async function getServerSidePropsPageIndex({}: GetServerSidePropsContext) {
+	const data = await client.records.getFullList(
+		'mangas',
+		Number.MAX_SAFE_INTEGER,
+		{
+			expand: 'upload_by',
+			sort: '-created'
+		}
+	)
+
+	const items = data.map(serverDataTransform)
 
 	return {
 		props: {
-			data: { ...data },
-			messages: (await import(`../../locales/${locale}.json`)).default
+			data: items
 		}
 	}
 }

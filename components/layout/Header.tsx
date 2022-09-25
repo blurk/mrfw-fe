@@ -1,36 +1,22 @@
-import React from 'react'
-import {
-	Burger,
-	Header as MantineHeader,
-	MediaQuery,
-	Text,
-	useMantineTheme
-} from '@mantine/core'
+import { Box, Container, Group, Header as MantineHeader } from '@mantine/core'
+import Logo from 'components/atoms/Logo'
+import MenuProfile from 'components/atoms/MenuProfile'
+import SearchBox from 'components/atoms/SearchBox'
 
-type Props = {
-	open: boolean
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+type Props = {}
 
-const Header = ({ open, setOpen }: Props) => {
-	const theme = useMantineTheme()
-
+const Header = ({}: Props) => {
 	return (
-		<MantineHeader height={70} p='xs'>
-			{/* Header content */}
-			<div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-				<MediaQuery largerThan='sm' styles={{ display: 'none' }}>
-					<Burger
-						opened={open}
-						onClick={() => setOpen((o) => !o)}
-						size='sm'
-						color={theme.colors.gray[6]}
-						mr='xl'
-					/>
-				</MediaQuery>
-
-				<Text>Application header</Text>
-			</div>
+		<MantineHeader height={70} p='lg'>
+			<Container>
+				<Group position='apart'>
+					<Logo />
+					<Box sx={{ flex: 1 }}>
+						<SearchBox />
+					</Box>
+					<MenuProfile />
+				</Group>
+			</Container>
 		</MantineHeader>
 	)
 }

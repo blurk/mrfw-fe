@@ -2,7 +2,8 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { MantineProvider } from '@mantine/core'
 import { Layout } from '../components'
-import { NextIntlProvider } from 'next-intl'
+import { SWRConfig } from 'swr'
+import { Toaster } from 'react-hot-toast'
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
@@ -16,20 +17,21 @@ function MyApp({ Component, pageProps }: AppProps) {
 				/>
 			</Head>
 
-			<MantineProvider
-				withGlobalStyles
-				withNormalizeCSS
-				theme={
-					{
-						/** Put your mantine theme override here */
-					}
-				}>
-				<Layout>
-					<NextIntlProvider messages={pageProps.messages}>
+			<SWRConfig>
+				<MantineProvider
+					withGlobalStyles
+					withNormalizeCSS
+					theme={
+						{
+							/** Put your mantine theme override here */
+						}
+					}>
+					<Toaster />
+					<Layout>
 						<Component {...pageProps} />
-					</NextIntlProvider>
-				</Layout>
-			</MantineProvider>
+					</Layout>
+				</MantineProvider>
+			</SWRConfig>
 		</>
 	)
 }

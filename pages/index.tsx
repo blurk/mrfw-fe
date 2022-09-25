@@ -1,39 +1,29 @@
-import { Text } from '@mantine/core'
+import { Stack, Text } from '@mantine/core'
+import MangaSection from 'components/atoms/MangaSection'
 import type { NextPage } from 'next'
-import { useTranslations } from 'next-intl'
 import { NextSeo } from 'next-seo'
-import { Author, Manga, Genre, Profile, Chapter } from 'types'
+import { HomePageContent } from 'seo'
+import { Manga } from 'types'
 
 import { getServerSidePropsPageIndex } from '../services/getServerSideProps'
 
 interface Props {
-	data: Manga & {
-		'@expand': {
-			upload_by: Profile
-			genres: Genre[]
-			author: Author[]
-			chapters: Chapter[]
-			comments: Comment[]
-		}
-	}
+	data: Manga[]
 }
 
 const Home: NextPage<Props> = ({ data }) => {
-	const t = useTranslations('Index')
-
 	return (
 		<>
 			<NextSeo
-				title={t('seo.title')}
-				additionalLinkTags={[{ rel: 'icon', href: '/favicon.ico' }]}
+				title={HomePageContent.seo.title}
 				additionalMetaTags={[
-					{ name: 'description', content: t('seo.description') }
+					{ name: 'description', content: HomePageContent.seo.description }
 				]}
 			/>
 
-			<Text size='xl' color='red'>
-				{data['@expand'].upload_by.name}
-			</Text>
+			<Stack>
+				<MangaSection sectionTitle='Truyện mới cập nhật' data={data} />
+			</Stack>
 		</>
 	)
 }
