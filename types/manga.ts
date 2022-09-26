@@ -1,8 +1,4 @@
-import {
-	BasePocketbaseCollection,
-	BasePocketbaseRecord,
-	BasePocketbaseRecordRaw
-} from './base'
+import { BasePocketbaseCollection, BasePocketbaseRecord } from './base'
 import { Author } from './author'
 import { Chapter } from './chapter'
 import { Genre } from './genre'
@@ -36,3 +32,11 @@ export interface MangaRaw extends Omit<Manga, 'expand'> {
 export interface MangaList extends BasePocketbaseCollection<Manga> {}
 
 export interface MangaListRaw extends BasePocketbaseCollection<MangaRaw> {}
+
+export interface MangaUploadRequest
+	extends Pick<
+		Manga,
+		'title' | 'description' | 'author' | 'status' | 'genres' | 'upload_by'
+	> {
+	cover: File | null
+}

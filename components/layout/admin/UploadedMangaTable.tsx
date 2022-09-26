@@ -1,4 +1,12 @@
-import { Anchor, Loader, Table } from '@mantine/core'
+import {
+	Anchor,
+	Loader,
+	Table,
+	ActionIcon,
+	Tooltip,
+	Group,
+	Text
+} from '@mantine/core'
 import React, { Suspense } from 'react'
 import { uploadedMangaByUser } from 'services/fetchers'
 import client from 'services/initPocketBase'
@@ -14,7 +22,7 @@ import {
 import Link from 'next/link'
 import MangaStatusBadge from 'components/atoms/MangaStatusBadge'
 import { formatDate, MangaStatusText } from 'utils'
-import dayjs from 'dayjs'
+import { IconEdit, IconList, IconTrash } from '@tabler/icons'
 
 type Props = {}
 
@@ -24,7 +32,7 @@ const columns = [
 	columnHelper.accessor('title', {
 		header: 'Tên truyện',
 		cell: (info) => (
-			<Link href={`/admin/manga/${info.row.original.id}`}>
+			<Link href={`/manga/${info.row.original.id}`}>
 				<Anchor>{info.getValue()}</Anchor>
 			</Link>
 		)
@@ -47,7 +55,7 @@ const columns = [
 	}),
 	columnHelper.accessor('chapters', {
 		header: 'Số chương',
-		cell: (info) => info.getValue().length
+		cell: (info) => <Text align='center'>{info.getValue().length}</Text>
 	}),
 	columnHelper.accessor('created', {
 		header: 'Ngày đăng',
@@ -88,6 +96,8 @@ const UploadedMangaTable = (props: Props) => {
 										  )}
 								</th>
 							))}
+							{/* ACTIONS HEADER */}
+							<th></th>
 						</tr>
 					))}
 				</thead>
@@ -100,6 +110,28 @@ const UploadedMangaTable = (props: Props) => {
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</td>
 							))}
+							{/* ACTIONS */}
+							<td>
+								<Group>
+									<Tooltip label='Chỉnh sửa truyện'>
+										<ActionIcon color='green'>
+											<IconEdit size={18} />
+										</ActionIcon>
+									</Tooltip>
+
+									<Tooltip label='Quản lý chương'>
+										<ActionIcon color='blue'>
+											<IconList size={18} />
+										</ActionIcon>
+									</Tooltip>
+
+									<Tooltip label='Xóa truyện'>
+										<ActionIcon color='red'>
+											<IconTrash size={18} />
+										</ActionIcon>
+									</Tooltip>
+								</Group>
+							</td>
 						</tr>
 					))}
 				</tbody>
