@@ -12,7 +12,7 @@ import {
 import Link from 'next/link'
 import Router from 'next/router'
 import { logout } from 'services/initPocketBase'
-import { useSession } from 'utils/useSession'
+import { useSession } from 'utils'
 
 type Props = {}
 

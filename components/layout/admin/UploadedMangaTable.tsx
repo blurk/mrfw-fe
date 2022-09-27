@@ -1,30 +1,25 @@
-import {
-	Anchor,
-	Loader,
-	Table,
-	ActionIcon,
-	Tooltip,
-	Group,
-	Text
-} from '@mantine/core'
-import React, { Suspense } from 'react'
+import { Anchor, Loader, Modal, Text, Group, Button } from '@mantine/core'
+import { Suspense, useState } from 'react'
 import { uploadedMangaByUser } from 'services/fetchers'
 import client from 'services/initPocketBase'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { MangaList, MangaRaw } from 'types'
 
 import {
 	createColumnHelper,
-	flexRender,
 	getCoreRowModel,
 	useReactTable
 } from '@tanstack/react-table'
-import Link from 'next/link'
+import BaseTable from 'components/atoms/BaseTable'
 import MangaStatusBadge from 'components/atoms/MangaStatusBadge'
+import Link from 'next/link'
 import { formatDate, MangaStatusText } from 'utils'
-import { IconEdit, IconList, IconTrash } from '@tabler/icons'
+import { useDisclosure } from '@mantine/hooks'
+import toast from 'react-hot-toast'
 
-type Props = {}
+type Props = {
+	showDrawer: () => void
+}
 
 const columnHelper = createColumnHelper<MangaRaw>()
 
@@ -67,11 +62,14 @@ const columns = [
 	})
 ]
 
-const UploadedMangaTable = (props: Props) => {
+const UploadedMangaTable = ({ showDrawer }: Props) => {
 	const { data } = useSWR<MangaList>('uploaded-manga', uploadedMangaByUser, {
 		isPaused: () => client.authStore.model == null,
 		suspense: true
 	})
+
+	const { data: uploadMangaFormStatus, mutate: updateUploadMangaFormStatus } =
+		useSWR('upload-manga-form-status')
 
 	const table = useReactTable({
 		data: data?.items ?? [],
@@ -79,64 +77,72 @@ const UploadedMangaTable = (props: Props) => {
 		getCoreRowModel: getCoreRowModel()
 	})
 
+	const [currentManga, setCurrentManga] = useState<MangaRaw | null>(null)
+
+	const onEdit = (row: MangaRaw) => {
+		updateUploadMangaFormStatus({
+			...uploadMangaFormStatus,
+			editData: row
+		})
+		showDrawer()
+	}
+	const onChapterManagement = (row: MangaRaw) => {}
+
+	const [isDeleteModalOpen, deleteModalOpenHandlers] = useDisclosure(false)
+
+	const onDelete = (row: MangaRaw) => {
+		setCurrentManga(row)
+		deleteModalOpenHandlers.open()
+	}
+
+	const onDeleteConfirm = async () => {
+		if (currentManga) {
+			await toast.promise(client.records.delete('mangas', currentManga.id), {
+				loading: 'Đang xóa truyện...',
+				success: 'Xóa truyện thành công',
+				error: 'Xóa truyện thất bại'
+			})
+			mutate('uploaded-manga')
+		}
+
+		deleteModalOpenHandlers.close()
+	}
+
 	return (
-		<Suspense fallback={<Loader />}>
-			<Table>
-				{/* TABLE HEAD */}
-				<thead>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<tr key={headerGroup.id}>
-							{headerGroup.headers.map((header) => (
-								<th key={header.id}>
-									{header.isPlaceholder
-										? null
-										: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-										  )}
-								</th>
-							))}
-							{/* ACTIONS HEADER */}
-							<th></th>
-						</tr>
-					))}
-				</thead>
-				{/* TABLE BODY */}
-				<tbody>
-					{table.getRowModel().rows.map((row) => (
-						<tr key={row.id}>
-							{row.getVisibleCells().map((cell) => (
-								<td key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</td>
-							))}
-							{/* ACTIONS */}
-							<td>
-								<Group>
-									<Tooltip label='Chỉnh sửa truyện'>
-										<ActionIcon color='green'>
-											<IconEdit size={18} />
-										</ActionIcon>
-									</Tooltip>
+		<>
+			<Modal
+				centered
+				opened={isDeleteModalOpen}
+				onClose={deleteModalOpenHandlers.close}
+				withCloseButton={false}
+				title={
+					<Text>
+						Bạn có muốn xóa truyện{' '}
+						<Text component='span' color='blue'>
+							{currentManga?.title ?? ''}
+						</Text>{' '}
+						không?
+					</Text>
+				}>
+				<Group position='right'>
+					<Button color='blue' onClick={onDeleteConfirm}>
+						Có
+					</Button>
+					<Button color='red' onClick={deleteModalOpenHandlers.close}>
+						Không
+					</Button>
+				</Group>
+			</Modal>
 
-									<Tooltip label='Quản lý chương'>
-										<ActionIcon color='blue'>
-											<IconList size={18} />
-										</ActionIcon>
-									</Tooltip>
-
-									<Tooltip label='Xóa truyện'>
-										<ActionIcon color='red'>
-											<IconTrash size={18} />
-										</ActionIcon>
-									</Tooltip>
-								</Group>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</Table>
-		</Suspense>
+			<Suspense fallback={<Loader />}>
+				<BaseTable
+					table={table}
+					onEdit={onEdit}
+					onChapterManagement={onChapterManagement}
+					onDelete={onDelete}
+				/>
+			</Suspense>
+		</>
 	)
 }
 

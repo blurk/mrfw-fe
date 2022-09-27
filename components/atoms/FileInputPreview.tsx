@@ -1,31 +1,24 @@
-import { FileInputProps, Group, Center } from '@mantine/core'
-import { IconPhoto } from '@tabler/icons'
+import { FileInputProps, Group, Box } from '@mantine/core'
+import Image from 'next/image'
 
-function FilePreview({ file }: { file: File }) {
+function FilePreview({ file }: { file: File | string }) {
+	const imageUrl = typeof file !== 'string' ? URL.createObjectURL(file) : file
+
 	return (
-		<Center
-			inline
-			sx={(theme) => ({
-				backgroundColor:
-					theme.colorScheme === 'dark'
-						? theme.colors.dark[7]
-						: theme.colors.gray[1],
-				fontSize: theme.fontSizes.xs,
-				padding: '3px 7px',
-				borderRadius: theme.radius.sm
-			})}>
-			<IconPhoto size={14} style={{ marginRight: 5 }} />
-			<span
-				style={{
-					whiteSpace: 'nowrap',
-					textOverflow: 'ellipsis',
-					overflow: 'hidden',
-					maxWidth: 200,
-					display: 'inline-block'
-				}}>
-				{file.name}
-			</span>
-		</Center>
+		<Box
+			sx={{
+				position: 'relative',
+				width: '100%',
+				aspectRatio: '1'
+			}}>
+			<Image
+				src={imageUrl}
+				alt='preview'
+				layout='fill'
+				objectFit='cover'
+				objectPosition='center'
+			/>
+		</Box>
 	)
 }
 

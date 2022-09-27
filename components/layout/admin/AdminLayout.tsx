@@ -1,17 +1,42 @@
-import { Box, Button, Group, Title, Drawer } from '@mantine/core'
-import { useToggle } from '@mantine/hooks'
+import {
+	Box,
+	Button,
+	Drawer,
+	Group,
+	Modal,
+	ScrollArea,
+	Text,
+	Title
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { IconBookUpload } from '@tabler/icons'
 import FormUploadManga from 'components/form/FormUploadManga'
-import { useState } from 'react'
+import useSWR from 'swr'
+import { SWRMangaUploadFormStatus } from 'types'
 import UploadedMangaTable from './UploadedMangaTable'
 
 type Props = {}
 
 const MangaManagementLayout = ({}: Props) => {
-	const [showDrawer, toggleDrawer] = useToggle([false, true] as const)
+	const uploadMangaFormStatus = useSWR<SWRMangaUploadFormStatus>(
+		'upload-manga-form-status',
+		() => ({
+			isDirty: false,
+			editData: null
+		})
+	)
+
+	console.count('MangaManagementLayout')
+
+	const [isDrawerOpen, drawerHandlers] = useDisclosure(false)
+	const [isModalOpen, modalHandlers] = useDisclosure(false)
 
 	const handleDrawerClose = () => {
-		toggleDrawer(false)
+		if (uploadMangaFormStatus?.data?.isDirty) {
+			modalHandlers.open()
+		} else {
+			drawerHandlers.close()
+		}
 	}
 
 	return (
@@ -25,26 +50,59 @@ const MangaManagementLayout = ({}: Props) => {
 					variant='gradient'
 					gradient={{ from: 'indigo', to: 'cyan' }}
 					leftIcon={<IconBookUpload size={18} />}
-					onClick={() => toggleDrawer(true)}>
+					onClick={drawerHandlers.open}>
 					Thêm truyện
 				</Button>
 			</Group>
 
 			<Box mt='lg' p='sm' sx={{ backgroundColor: 'white' }}>
-				<UploadedMangaTable />
+				<UploadedMangaTable showDrawer={drawerHandlers.open} />
 			</Box>
 
 			{/* ADD DRAWER */}
 			<Drawer
-				title='Thêm truyện'
+				title={
+					uploadMangaFormStatus?.data?.editData
+						? 'Chỉnh sửa truyện'
+						: 'Thêm truyện'
+				}
 				padding='xl'
 				size='75%'
 				position='right'
 				overlayOpacity={0.55}
 				overlayBlur={3}
-				opened={showDrawer}
+				opened={isDrawerOpen}
 				onClose={handleDrawerClose}>
-				<FormUploadManga />
+				{/* DISCARD MODAL */}
+				<Modal
+					size='sm'
+					centered
+					title={
+						<Title order={3} color='dark.7'>
+							Có thay đổi chưa được lưu
+						</Title>
+					}
+					withCloseButton={false}
+					opened={isModalOpen}
+					onClose={modalHandlers.close}>
+					<Text size='md'>Bạn có chắc là muốn thoát không?</Text>
+					<Group mt='md' position='right'>
+						<Button variant='subtle' color='dark' onClick={modalHandlers.close}>
+							Không
+						</Button>
+						<Button
+							color='red'
+							onClick={() => {
+								modalHandlers.close()
+								drawerHandlers.close()
+							}}>
+							Có
+						</Button>
+					</Group>
+				</Modal>
+				<ScrollArea type='hover' style={{ height: '80vh', width: '100%' }}>
+					<FormUploadManga hideDrawer={drawerHandlers.close} />
+				</ScrollArea>
 			</Drawer>
 		</Box>
 	)

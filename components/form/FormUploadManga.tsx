@@ -1,62 +1,68 @@
-import { useForm, yupResolver } from '@mantine/form'
 import {
-	TextInput,
-	Textarea,
-	Select,
 	Button,
 	FileInput,
+	Grid,
 	MultiSelect,
-	Group
+	Select,
+	Textarea,
+	TextInput
 } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
-import { MangaUploadRequest } from 'types'
-import { uploadMangaSchema } from 'utils'
-import client from 'services/initPocketBase'
-import { User } from 'pocketbase'
-import useSWR from 'swr'
-import { getAuthors, getGenres } from 'services/fetchers'
-import toast from 'react-hot-toast'
+import { useForm, yupResolver } from '@mantine/form'
 import FileInputPreview from 'components/atoms/FileInputPreview'
+import { User } from 'pocketbase'
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
+import { getAuthors, getGenres } from 'services/fetchers'
+import client from 'services/initPocketBase'
+import useSWR, { useSWRConfig } from 'swr'
+import { MangaUploadRequest, SWRMangaUploadFormStatus } from 'types'
+import { MANGA_STATUS, transformToFormData, uploadMangaSchema } from 'utils'
 
-type Props = {}
+type Props = {
+	hideDrawer: () => void
+}
 
-const MANGA_STATUS = [
-	{ value: 'ONGOING', label: 'Đang tiến hành' },
-	{ value: 'COMPLETED', label: 'Đã hoàn thành' },
-	{ value: 'CANCELLED', label: 'Bị hủy' },
-	{ value: 'PAUSED', label: 'Tạm ngưng' }
-]
+const getInitialValues = (data?: SWRMangaUploadFormStatus['editData']) =>
+	data
+		? {
+				...data,
+				cover: `${process.env.NEXT_PUBLIC_FILES_URL}/mangas/${data.id}/${data.cover}`
+		  }
+		: {
+				...uploadMangaSchema.cast({}),
+				upload_by: (client.authStore.model as User).profile?.id ?? ''
+		  }
 
-const FormUploadManga = () => {
-	const { onSubmit, getInputProps } = useForm<MangaUploadRequest>({
-		validate: yupResolver(uploadMangaSchema),
-		initialValues: {
-			...uploadMangaSchema.cast({}),
-			upload_by: (client.authStore.model as User).profile?.id ?? ''
+const FormUploadManga = ({ hideDrawer }: Props) => {
+	const { mutate } = useSWRConfig()
+
+	const { data: uploadMangaFormStatus, mutate: updateUploadMangaFormStatus } =
+		useSWR<SWRMangaUploadFormStatus>('upload-manga-form-status')
+
+	const { onSubmit, getInputProps, isDirty, reset } =
+		useForm<MangaUploadRequest>({
+			validate: yupResolver(uploadMangaSchema),
+			initialValues: getInitialValues(uploadMangaFormStatus?.editData)
+		})
+
+	useEffect(() => {
+		if (uploadMangaFormStatus) {
+			updateUploadMangaFormStatus({
+				...uploadMangaFormStatus,
+				isDirty: isDirty()
+			})
 		}
-	})
+	}, [isDirty, updateUploadMangaFormStatus, uploadMangaFormStatus])
 
 	const [isAdding, setIsAdding] = useState(false)
 	const handleSubmit = async (data: MangaUploadRequest) => {
-		const formData = new FormData()
-
-		Object.keys(data).forEach((key) => {
-			//@ts-ignore
-			const value = data[key]
-			if (Array.isArray(value) && value.length > 1) {
-				for (let i = 0; i < value.length; i++) {
-					formData.append(key, value[i])
-				}
-			} else {
-				//@ts-ignore
-				formData.append(key, value)
-			}
-		})
-
-		setIsAdding(true)
 		try {
-			await client.records.create('mangas', formData)
+			setIsAdding(true)
+			await client.records.create('mangas', transformToFormData(data))
 			toast.success('Thêm mới thành công')
+			mutate('uploaded-manga')
+			reset()
+			hideDrawer()
 		} catch (error) {
 			toast.error('Thêm mới thất bại')
 		} finally {
@@ -90,78 +96,82 @@ const FormUploadManga = () => {
 	}
 
 	return (
-		<form onSubmit={onSubmit(handleSubmit)}>
-			<TextInput
-				label='Tên truyện'
-				placeholder='Doraemon'
-				withAsterisk
-				{...getInputProps('title')}
-			/>
+		<form onSubmit={onSubmit(handleSubmit)} style={{ width: '99%' }}>
+			<Grid>
+				<Grid.Col span={6}>
+					<TextInput
+						label='Tên truyện'
+						placeholder='Doraemon'
+						withAsterisk
+						{...getInputProps('title')}
+					/>
 
-			<Textarea
-				label='Tóm tắt truyện'
-				placeholder='Nội dung tóm tắt...'
-				mt='sm'
-				autosize
-				minRows={4}
-				{...getInputProps('description')}
-			/>
+					<Select
+						label='Trạng thái'
+						placeholder='Chọn một'
+						mt='sm'
+						withAsterisk
+						data={MANGA_STATUS}
+						{...getInputProps('status')}
+					/>
 
-			<Group>
-				<FileInput
-					placeholder='Chọn một ảnh bìa'
-					label='Ảnh bìa'
-					mt='sm'
-					withAsterisk
-					valueComponent={FileInputPreview}
-					sx={{ flex: 1 }}
-					{...getInputProps('cover')}
-				/>
+					<MultiSelect
+						label='Thể loại'
+						placeholder='Chọn một hoặc nhiều thể loại'
+						mt='sm'
+						withAsterisk
+						searchable
+						multiple
+						nothingFound='Không tìm thấy thể loại'
+						maxDropdownHeight={160}
+						data={genres ?? []}
+						creatable
+						getCreateLabel={(query) => `+ Thêm mới ${query}`}
+						onCreate={handleGenreCreate}
+						{...getInputProps('genres')}
+						sx={{ flex: 1 }}
+					/>
 
-				<Select
-					label='Trạng thái'
-					placeholder='Chọn một'
-					mt='sm'
-					withAsterisk
-					data={MANGA_STATUS}
-					sx={{ flex: 1 }}
-					{...getInputProps('status')}
-				/>
-			</Group>
+					<MultiSelect
+						label='Tác giả'
+						placeholder='Chọn một hoặc nhiều tác giả'
+						mt='sm'
+						withAsterisk
+						searchable
+						multiple
+						nothingFound='Không tìm thấy tác giả'
+						maxDropdownHeight={160}
+						data={authors ?? []}
+						creatable
+						getCreateLabel={(query) => `+ Thêm mới ${query}`}
+						onCreate={handleAuthorCreate}
+						{...getInputProps('author')}
+						sx={{ flex: 1 }}
+					/>
 
-			<MultiSelect
-				label='Thể loại'
-				placeholder='Chọn một hoặc nhiều thể loại'
-				mt='sm'
-				withAsterisk
-				searchable
-				multiple
-				nothingFound='Không tìm thấy thể loại'
-				maxDropdownHeight={160}
-				data={genres ?? []}
-				creatable
-				getCreateLabel={(query) => `+ Thêm mới ${query}`}
-				onCreate={handleGenreCreate}
-				{...getInputProps('genres')}
-			/>
+					<Textarea
+						label='Tóm tắt truyện'
+						placeholder='Nội dung tóm tắt...'
+						withAsterisk
+						autosize
+						minRows={5.5}
+						maxRows={5.5}
+						{...getInputProps('description')}
+					/>
+				</Grid.Col>
 
-			<MultiSelect
-				label='Tác giả'
-				placeholder='Chọn một hoặc nhiều tác giả'
-				mt='sm'
-				withAsterisk
-				searchable
-				multiple
-				nothingFound='Không tìm thấy tác giả'
-				maxDropdownHeight={160}
-				data={authors ?? []}
-				creatable
-				getCreateLabel={(query) => `+ Thêm mới ${query}`}
-				onCreate={handleAuthorCreate}
-				{...getInputProps('author')}
-			/>
+				<Grid.Col span={6}>
+					<FileInput
+						placeholder='Chọn một ảnh bìa'
+						label='Ảnh bìa'
+						withAsterisk
+						valueComponent={FileInputPreview}
+						{...getInputProps('cover')}
+					/>
+				</Grid.Col>
+			</Grid>
 
-			<Button type='submit' mt='lg' loading={isAdding}>
+			<Button type='submit' my='lg' loading={isAdding}>
 				Thêm mới
 			</Button>
 		</form>

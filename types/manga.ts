@@ -38,5 +38,10 @@ export interface MangaUploadRequest
 		Manga,
 		'title' | 'description' | 'author' | 'status' | 'genres' | 'upload_by'
 	> {
-	cover: File | null
+	cover: File | null | string
+}
+
+export interface SWRMangaUploadFormStatus {
+	isDirty: boolean
+	editData: MangaRaw | null
 }

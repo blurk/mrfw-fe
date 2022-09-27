@@ -7,7 +7,7 @@ import { useCallback } from 'react'
 import toast from 'react-hot-toast'
 import client from 'services/initPocketBase'
 import { LoginRequest } from 'types'
-import { useSession } from 'utils/useSession'
+import { useSession } from 'utils'
 
 type Props = {
 	prevRoute: string

@@ -13,16 +13,18 @@ export const loginSchema = object().shape({
 
 export const uploadMangaSchema = object().shape({
 	title: string().required('Tên tryện không được để trống').default(''),
-	description: string().default(''),
+	description: string()
+		.default('')
+		.required('Tóm tắt truyện không được để trống'),
 	cover: mixed().required('Bìa truyện không được để trống').default(null),
 
 	genres: array(string().default(''))
 		.required('Thể loại không được để trống')
-		.min(1)
+		.min(1, 'Chọn ít nhất 1 thể loại')
 		.default([]),
 	author: array(string().default(''))
 		.required('Tác giả không được để trống')
-		.min(1)
+		.min(1, 'Chọn ít nhất 1 tác giả')
 		.default([]),
 
 	status: string()
