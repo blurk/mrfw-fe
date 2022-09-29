@@ -1,10 +1,15 @@
-import { NextPage } from 'next'
-import React from 'react'
+import { NextPage } from "next";
+import Link from "next/link";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const PageMangaIndex: NextPage<Props> = (props) => {
-	return <div>index</div>
-}
+  return (
+    <div>
+      <Link href="/manga/vcj52yk7kuq1ldo">To manga</Link>
+    </div>
+  );
+};
 
-export default PageMangaIndex
+export default PageMangaIndex;
