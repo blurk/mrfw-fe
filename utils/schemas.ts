@@ -32,3 +32,12 @@ export const uploadMangaSchema = object().shape({
 		.default('ONGOING')
 		.oneOf(['ONGOING', 'COMPLETED', 'CANCELLED', 'PAUSED'])
 })
+
+export const chapterSchema = object().shape({
+	name: string().required('Tên chương không được để trống').default(''),
+	images: array()
+		.of(mixed().default(null))
+		.min(1, 'Chương phải có ít nhất 1 ảnh')
+		.required('Ảnh của chương không được để trống')
+		.default([])
+})

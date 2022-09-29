@@ -87,6 +87,7 @@ export const MangaCard = ({
 							layout='fill'
 							objectFit='cover'
 							objectPosition='center'
+							priority
 						/>
 					</Anchor>
 				</Link>

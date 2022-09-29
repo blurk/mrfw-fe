@@ -69,7 +69,7 @@ const MenuProfile = ({}: Props) => {
 					}>
 					Bình luận của bạn
 				</Menu.Item>
-				<Link href='/admin'>
+				<Link href='/manage'>
 					<Menu.Item
 						icon={
 							<IconBook size={14} stroke={1.5} color={theme.colors.green[6]} />

@@ -1,7 +1,8 @@
-import { FileInputProps, Group, Box } from '@mantine/core'
+import { FileInputProps, Box, SimpleGrid, ScrollArea } from '@mantine/core'
 import Image from 'next/image'
+import { memo } from 'react'
 
-function FilePreview({ file }: { file: File | string }) {
+export function FilePreview({ file }: { file: File | string }) {
 	const imageUrl = typeof file !== 'string' ? URL.createObjectURL(file) : file
 
 	return (
@@ -23,21 +24,28 @@ function FilePreview({ file }: { file: File | string }) {
 }
 
 const FileInputPreview: FileInputProps['valueComponent'] = ({ value }) => {
-	if (Array.isArray(value)) {
-		return (
-			<Group spacing='sm' py='xs'>
-				{value.map((file, index) => (
-					<FilePreview file={file} key={index} />
-				))}
-			</Group>
-		)
-	}
-
 	if (!value) {
 		return null
+	}
+
+	if (Array.isArray(value)) {
+		return (
+			<ScrollArea type='auto' style={{ height: 300 }}>
+				<SimpleGrid
+					cols={4}
+					breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+					mt={value.length > 0 ? 'xl' : 0}>
+					{value.map((file, index) => (
+						<FilePreview file={file} key={index} />
+					))}
+				</SimpleGrid>
+			</ScrollArea>
+		)
 	}
 
 	return <FilePreview file={value} />
 }
 
-export default FileInputPreview
+export default memo(FileInputPreview, function (prevProps, nextProps) {
+	return JSON.stringify(prevProps) === JSON.stringify(nextProps)
+})
