@@ -16,6 +16,8 @@ import Link from 'next/link'
 import { formatDate, MangaStatusText } from 'utils'
 import { useDisclosure } from '@mantine/hooks'
 import toast from 'react-hot-toast'
+import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState'
+import Router from 'next/router'
 
 type Props = {
 	showDrawer: () => void
@@ -68,8 +70,7 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
 		suspense: true
 	})
 
-	const { data: uploadMangaFormStatus, mutate: updateUploadMangaFormStatus } =
-		useSWR('upload-manga-form-status')
+	const { updateEditData } = useFormState() as UseFormStateReturn<MangaRaw>
 
 	const table = useReactTable({
 		data: data?.items ?? [],
@@ -80,13 +81,12 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
 	const [currentManga, setCurrentManga] = useState<MangaRaw | null>(null)
 
 	const onEdit = (row: MangaRaw) => {
-		updateUploadMangaFormStatus({
-			...uploadMangaFormStatus,
-			editData: row
-		})
+		updateEditData(row)
 		showDrawer()
 	}
-	const onChapterManagement = (row: MangaRaw) => {}
+	const onChapterManagement = (row: MangaRaw) => {
+		Router.push(`/admin/${row.id}`)
+	}
 
 	const [isDeleteModalOpen, deleteModalOpenHandlers] = useDisclosure(false)
 

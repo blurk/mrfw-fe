@@ -9,7 +9,7 @@ function FilePreview({ file }: { file: File | string }) {
 			sx={{
 				position: 'relative',
 				width: '100%',
-				aspectRatio: '1'
+				aspectRatio: '2/3'
 			}}>
 			<Image
 				src={imageUrl}

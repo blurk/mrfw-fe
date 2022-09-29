@@ -11,28 +11,20 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { IconBookUpload } from '@tabler/icons'
 import FormUploadManga from 'components/form/FormUploadManga'
-import useSWR from 'swr'
-import { SWRMangaUploadFormStatus } from 'types'
+import { MangaRaw } from 'types'
+import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState'
 import UploadedMangaTable from './UploadedMangaTable'
 
 type Props = {}
 
 const MangaManagementLayout = ({}: Props) => {
-	const uploadMangaFormStatus = useSWR<SWRMangaUploadFormStatus>(
-		'upload-manga-form-status',
-		() => ({
-			isDirty: false,
-			editData: null
-		})
-	)
-
-	console.count('MangaManagementLayout')
+	const { isDirty, editData } = useFormState() as UseFormStateReturn<MangaRaw>
 
 	const [isDrawerOpen, drawerHandlers] = useDisclosure(false)
 	const [isModalOpen, modalHandlers] = useDisclosure(false)
 
 	const handleDrawerClose = () => {
-		if (uploadMangaFormStatus?.data?.isDirty) {
+		if (isDirty) {
 			modalHandlers.open()
 		} else {
 			drawerHandlers.close()
@@ -61,13 +53,9 @@ const MangaManagementLayout = ({}: Props) => {
 
 			{/* ADD DRAWER */}
 			<Drawer
-				title={
-					uploadMangaFormStatus?.data?.editData
-						? 'Chỉnh sửa truyện'
-						: 'Thêm truyện'
-				}
+				title={editData ? 'Chỉnh sửa truyện' : 'Thêm truyện'}
 				padding='xl'
-				size='75%'
+				size='50%'
 				position='right'
 				overlayOpacity={0.55}
 				overlayBlur={3}
