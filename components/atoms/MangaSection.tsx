@@ -31,7 +31,8 @@ const MangaSection = ({ sectionTitle, data }: Props) => {
 				</Anchor>
 			</Link>
 			<Carousel
-				slideSize='25%'
+				height={400}
+				slideSize='30%'
 				slideGap='xl'
 				align='start'
 				mt='md'

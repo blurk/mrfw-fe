@@ -39,7 +39,6 @@ const useStyles = createStyles((theme) => ({
 	},
 
 	title: {
-		display: 'block',
 		marginTop: theme.spacing.md,
 		marginBottom: theme.spacing.xs / 2
 	},
@@ -102,7 +101,13 @@ export const MangaCard = ({
 			</Badge>
 
 			<Link href={href} passHref>
-				<Text className={classes.title} weight={500} component='a'>
+				<Text
+					className={classes.title}
+					weight={500}
+					component='a'
+					variant='link'
+					lineClamp={1}
+					title={title}>
 					{title}
 				</Text>
 			</Link>

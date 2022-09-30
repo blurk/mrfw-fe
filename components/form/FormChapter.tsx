@@ -1,17 +1,7 @@
-import {
-	Button,
-	FileButton,
-	Group,
-	List,
-	TextInput,
-	Text,
-	Box,
-	FileInput
-} from '@mantine/core'
+import { Button, FileInput, TextInput } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import FileInputPreview, {
-	FilePreview
-} from 'components/atoms/FileInputPreview'
+import FileInputPreview from 'components/atoms/FileInputPreview'
+import { Record } from 'pocketbase'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import client from 'services/initPocketBase'
@@ -23,7 +13,6 @@ import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState'
 type Props = {
 	hideDrawer: () => void
 	mid: string
-	chaptersId: string[]
 }
 
 const getInitialValues = (data?: Chapter | null) =>
@@ -39,7 +28,7 @@ const getInitialValues = (data?: Chapter | null) =>
 				...chapterSchema.cast({})
 		  }
 
-const FormChapter = ({ hideDrawer, mid, chaptersId }: Props) => {
+const FormChapter = ({ hideDrawer, mid }: Props) => {
 	const { mutate } = useSWRConfig()
 
 	const {
@@ -76,14 +65,25 @@ const FormChapter = ({ hideDrawer, mid, chaptersId }: Props) => {
 					'chapter',
 					transformToFormData({ ...data, belong_to: mid })
 				)
-				await client.records.update('mangas', mid, {
-					chapters: chaptersId.concat(res.id)
-				})
+
+				// Update chapters in manga
+				client.records
+					.getOne('mangas', mid)
+					.then(async (mangaDetails: Record) => {
+						try {
+							await client.records.update('mangas', mid, {
+								chapters: mangaDetails.chapters.concat(res.id)
+							})
+						} catch (error) {
+							console.error(error)
+						}
+					})
+					.catch(console.error)
 			}
 			toast.success(
 				editData ? 'Lưu chỉnh sửa thành công' : 'Thêm mới thành công'
 			)
-			mutate(mid)
+			mutate('chapters-table')
 			reset()
 			hideDrawer()
 		} catch (error) {

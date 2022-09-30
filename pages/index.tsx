@@ -8,10 +8,11 @@ import { Manga } from 'types'
 import { getServerSidePropsPageIndex } from '../services/getServerSideProps'
 
 interface Props {
-	data: Manga[]
+	recentlyUpdatedMangas: Manga[]
+	newMangas: Manga[]
 }
 
-const Home: NextPage<Props> = ({ data }) => {
+const Home: NextPage<Props> = ({ newMangas, recentlyUpdatedMangas }) => {
 	return (
 		<>
 			<NextSeo
@@ -22,7 +23,12 @@ const Home: NextPage<Props> = ({ data }) => {
 			/>
 
 			<Stack>
-				<MangaSection sectionTitle='Truyện mới cập nhật' data={data} />
+				<MangaSection
+					sectionTitle='Truyện mới cập nhật'
+					data={recentlyUpdatedMangas}
+				/>
+
+				<MangaSection sectionTitle='Truyện mới' data={newMangas} />
 			</Stack>
 		</>
 	)

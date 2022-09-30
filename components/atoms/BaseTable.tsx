@@ -1,11 +1,13 @@
-import { Group, Pagination, Table as MantineTable } from '@mantine/core'
+import { Table as MantineTable } from '@mantine/core'
 import { flexRender, Table } from '@tanstack/react-table'
+import BaseTablePagination from './BaseTablePagination'
 
 interface Props<T> {
 	table: Table<T>
+	hasPagination?: boolean
 }
 
-const BaseTable = <T,>({ table }: Props<T>) => {
+const BaseTable = <T,>({ table, hasPagination = false }: Props<T>) => {
 	return (
 		<>
 			<MantineTable>
@@ -39,9 +41,8 @@ const BaseTable = <T,>({ table }: Props<T>) => {
 					))}
 				</tbody>
 			</MantineTable>
-			<Group position='center' mt='md'>
-				<Pagination total={10} withEdges size='sm' />
-			</Group>
+
+			{hasPagination && <BaseTablePagination table={table} />}
 		</>
 	)
 }

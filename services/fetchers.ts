@@ -6,7 +6,8 @@ export const uploadedMangaByUser = (): Promise<MangaListRaw> =>
 	client.records
 		.getList('mangas', 1, 10, {
 			filter: `upload_by = "${(client.authStore.model as User).profile!.id}"`,
-			expand: 'author, genres'
+			expand: 'author, genres',
+			sort: '-created'
 		})
 		.then((data) => JSON.parse(JSON.stringify(data)))
 
@@ -26,10 +27,14 @@ export const getAuthors = (): Promise<{ value: string; label: string }[]> =>
 		}))
 	)
 
-export const getChaptersOfManga = async (mangaId: string) => {
+export const getChaptersOfManga = async (
+	mangaId: string,
+	page = 1,
+	perPage = 10
+) => {
 	try {
 		try {
-			const chapters = await client.records.getList('chapter', 1, 10, {
+			const chapters = await client.records.getList('chapter', page, perPage, {
 				filter: `belong_to = "${mangaId}"`,
 				sort: '-created'
 			})
