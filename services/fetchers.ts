@@ -69,12 +69,6 @@ export const searchManga = async (searchText: string) => {
 			}
 		)
 
-		let x = 0
-
-		while (x < 1000) {
-			x++
-		}
-
 		const resData = JSON.parse(JSON.stringify(res))
 
 		return resData.map(serverDataTransform).map((manga: Manga) => ({

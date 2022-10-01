@@ -26,6 +26,7 @@ export interface Manga extends BasePocketbaseRecord {
 	chapters: string[]
 	comments: string[]
 	upload_by: string
+	views: number
 	expand?: MangaExpand
 }
 

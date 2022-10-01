@@ -1,3 +1,5 @@
+import { Author, Genre } from 'types'
+
 export const getImageUrl = (
 	collectionId: string,
 	recordId: string,
@@ -9,3 +11,9 @@ export const getKey = (pageIndex: number, perPage: number) => [
 	pageIndex,
 	perPage
 ]
+
+export const getAuthorsName = (authors: Author[]) =>
+	authors.map((author) => author.name).join(', ')
+
+export const getGenresName = (genres: Genre[]) =>
+	genres.map((genres) => genres.name)

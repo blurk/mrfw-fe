@@ -58,7 +58,10 @@ function SearchBox() {
 	const [searchValue, setSearchValue] = useState('')
 	const [debounced] = useDebouncedValue(searchValue, 1000)
 
-	const { data, error, isValidating } = useSWR(debounced, searchManga)
+	const { data, error, isValidating } = useSWR(
+		debounced ? debounced : null,
+		searchManga
+	)
 
 	return (
 		<Popover

@@ -1,12 +1,61 @@
+import { Box, Loader, Paper } from '@mantine/core'
+import ChapterViewer from 'components/atoms/ChapterViewer'
+import { MangaInfoCard } from 'components/atoms/MangaInfoCard'
+import { MangaPageHero } from 'components/atoms/MangaPageHero'
 import { GetServerSidePropsContext, NextPage } from 'next'
-import React from 'react'
+import { NextSeo } from 'next-seo'
+import { Suspense, useEffect } from 'react'
+import client from 'services/initPocketBase'
+import { Manga } from 'types'
+import {
+	getAuthorsName,
+	getGenresName,
+	getImageUrl,
+	serverDataTransform
+} from 'utils'
 
 type Props = {
-	id: string
+	mangaDetails: Manga
 }
 
-const PageMangaSingle: NextPage<Props> = ({ id }) => {
-	return <div>{id}</div>
+const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
+	let latestChapter = undefined
+	let firstChapter = undefined
+
+	if (mangaDetails.expand?.chapters) {
+		firstChapter = mangaDetails.expand?.chapters.at(-1)?.id ?? undefined
+		latestChapter = mangaDetails.expand?.chapters.at(0)?.id ?? undefined
+	}
+
+	return (
+		<>
+			<NextSeo
+				title={mangaDetails.title}
+				description={mangaDetails.description}
+			/>
+
+			<MangaInfoCard
+				title={mangaDetails.title}
+				status={mangaDetails.status}
+				description={mangaDetails.description}
+				uploadBy={
+					mangaDetails.expand?.upload_by
+						? mangaDetails.expand.upload_by.name
+						: ''
+				}
+				created={mangaDetails.created}
+				updated={mangaDetails.updated}
+				views={mangaDetails.views ?? 0}
+				genres={getGenresName(mangaDetails.expand?.genres ?? [])}
+				authors={getAuthorsName(mangaDetails.expand?.author ?? [])}
+				cover={getImageUrl('mangas', mangaDetails.id, mangaDetails.cover)}
+				latestChapter={latestChapter}
+				firstChapter={firstChapter}
+			/>
+
+			<ChapterViewer data={mangaDetails.expand?.chapters ?? []} />
+		</>
+	)
 }
 
 export default PageMangaSingle
@@ -14,9 +63,15 @@ export default PageMangaSingle
 export const getServerSideProps = async ({
 	query
 }: GetServerSidePropsContext) => {
+	const res = await client.records.getOne('mangas', query.id as string, {
+		expand: 'upload_by,genres,author,chapters,comments'
+	})
+
+	const mangaDetails = serverDataTransform(JSON.parse(JSON.stringify(res)))
+
 	return {
 		props: {
-			id: query.id
+			mangaDetails
 		}
 	}
 }
