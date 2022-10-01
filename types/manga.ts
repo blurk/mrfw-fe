@@ -1,4 +1,8 @@
-import { BasePocketbaseCollection, BasePocketbaseRecord } from './base'
+import {
+	BasePocketbaseCollection,
+	BasePocketbaseRecord,
+	BasePocketbaseRecordRaw
+} from './base'
 import { Author } from './author'
 import { Chapter } from './chapter'
 import { Genre } from './genre'

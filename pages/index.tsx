@@ -4,6 +4,11 @@ import type { NextPage } from 'next'
 import { NextSeo } from 'next-seo'
 import { HomePageContent } from 'seo'
 import { Manga } from 'types'
+import {
+	MangaSectionColor,
+	MangaSectionItemBadge,
+	MangaSectionTitle
+} from 'utils'
 
 import { getServerSidePropsPageIndex } from '../services/getServerSideProps'
 
@@ -24,11 +29,18 @@ const Home: NextPage<Props> = ({ newMangas, recentlyUpdatedMangas }) => {
 
 			<Stack>
 				<MangaSection
-					sectionTitle='Truyện mới cập nhật'
+					sectionTitle={MangaSectionTitle.RECENTLY_UPDATED}
+					itemBadgeText={MangaSectionItemBadge.RECENTLY_UPDATED}
+					accentColor={MangaSectionColor.RECENTLY_UPDATED}
 					data={recentlyUpdatedMangas}
 				/>
 
-				<MangaSection sectionTitle='Truyện mới' data={newMangas} />
+				<MangaSection
+					sectionTitle={MangaSectionTitle.NEW}
+					itemBadgeText={MangaSectionItemBadge.NEW}
+					accentColor={MangaSectionColor.NEW}
+					data={newMangas}
+				/>
 			</Stack>
 		</>
 	)

@@ -31,7 +31,7 @@ const useStyles = createStyles((theme) => ({
 		display: 'block'
 	},
 
-	rating: {
+	badge: {
 		position: 'absolute',
 		top: theme.spacing.xs,
 		right: theme.spacing.xs + 2,
@@ -61,7 +61,10 @@ const useStyles = createStyles((theme) => ({
 	}
 }))
 
-interface Props extends Manga {}
+interface Props extends Manga {
+	badgeText: string
+	accentColor: string
+}
 
 export const MangaCard = ({
 	cover,
@@ -69,7 +72,9 @@ export const MangaCard = ({
 	title,
 	description,
 	collectionId,
-	expand
+	expand,
+	badgeText,
+	accentColor
 }: Props) => {
 	const { classes, theme } = useStyles()
 
@@ -93,11 +98,11 @@ export const MangaCard = ({
 			</Card.Section>
 
 			<Badge
-				className={classes.rating}
+				className={classes.badge}
 				variant='gradient'
 				color='red'
-				gradient={{ from: 'red.4', to: 'red.8' }}>
-				mới cập nhật
+				gradient={{ from: `${accentColor}.4`, to: `${accentColor}.8` }}>
+				{badgeText}
 			</Badge>
 
 			<Link href={href} passHref>

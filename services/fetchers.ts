@@ -1,5 +1,15 @@
+import { AutocompleteItem } from '@mantine/core'
 import { User } from 'pocketbase'
-import { Author, ChapterList, Genre, MangaListRaw, MangaRaw } from 'types'
+import {
+	Author,
+	ChapterList,
+	Genre,
+	Manga,
+	MangaList,
+	MangaListRaw,
+	MangaRaw
+} from 'types'
+import { serverDataTransform } from 'utils'
 import client from './initPocketBase'
 
 export const uploadedMangaByUser = (): Promise<MangaListRaw> =>
@@ -45,5 +55,33 @@ export const getChaptersOfManga = async (
 		}
 	} catch (e) {
 		console.log(e)
+	}
+}
+
+export const searchManga = async (searchText: string) => {
+	try {
+		const res = await client.records.getFullList(
+			'mangas',
+			Number.MAX_SAFE_INTEGER,
+			{
+				expand: 'author',
+				filter: `title~"${searchText}"`
+			}
+		)
+
+		let x = 0
+
+		while (x < 1000) {
+			x++
+		}
+
+		const resData = JSON.parse(JSON.stringify(res))
+
+		return resData.map(serverDataTransform).map((manga: Manga) => ({
+			value: manga.id,
+			...manga
+		})) as Manga[]
+	} catch (err) {
+		console.log(err)
 	}
 }

@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from 'next'
-import { getThisWeekStartTime, getTodyStartTime } from 'utils'
+import { getThisWeekStartTime, getTodayStartTime } from 'utils'
 import { serverDataTransform } from 'utils/dataTransform'
 import client from '../initPocketBase'
 
@@ -10,7 +10,7 @@ export async function getServerSidePropsPageIndex({}: GetServerSidePropsContext)
 		{
 			expand: 'upload_by',
 			sort: '-updated',
-			filter: `updated>='${getTodyStartTime()}'`
+			filter: `updated>='${getTodayStartTime()}'`
 		}
 	)
 
@@ -24,10 +24,12 @@ export async function getServerSidePropsPageIndex({}: GetServerSidePropsContext)
 		}
 	)
 
+	const props = {
+		recentlyUpdatedMangas: recentlyUpdatedMangas.map(serverDataTransform),
+		newMangas: newMangas.map(serverDataTransform)
+	}
+
 	return {
-		props: {
-			recentlyUpdatedMangas: recentlyUpdatedMangas.map(serverDataTransform),
-			newMangas: newMangas.map(serverDataTransform)
-		}
+		props
 	}
 }

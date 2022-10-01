@@ -1,38 +1,81 @@
-import { Anchor, Box, Title, useMantineTheme } from '@mantine/core'
-import Link from 'next/link'
-import React from 'react'
-import { Manga } from 'types'
+import { Player } from '@lottiefiles/react-lottie-player'
 import { Carousel } from '@mantine/carousel'
-import { MangaCard } from './MangaCard'
+import {
+	Anchor,
+	Box,
+	Paper,
+	Stack,
+	Text,
+	Title,
+	useMantineTheme
+} from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import Link from 'next/link'
+import { useMemo } from 'react'
+import { Manga } from 'types'
+import { MangaCard } from './MangaCard'
 
 type Props = {
 	sectionTitle: string
 	data: Manga[]
+	itemBadgeText: string
+	accentColor: string
 }
 
-const MangaSection = ({ sectionTitle, data }: Props) => {
+const MangaSection = ({
+	sectionTitle,
+	data,
+	itemBadgeText,
+	accentColor
+}: Props) => {
 	const theme = useMantineTheme()
 
 	const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
-	const slides = data.map((item) => (
-		<Carousel.Slide key={item.id}>
-			<MangaCard {...item} />
-		</Carousel.Slide>
-	))
+
+	const slides = useMemo(() => {
+		if (data.length === 0) {
+			return (
+				<Carousel.Slide>
+					<Paper py='md' sx={{ height: 400 }}>
+						<Stack justify='center' sx={{ height: '100%' }}>
+							<Title order={2} color='dimmed' align='center' mb='md'>
+								Không có {sectionTitle.toLocaleLowerCase()} rồi.
+							</Title>
+							<Player
+								autoplay
+								loop
+								src='/lottie-files/no-data.json'
+								style={{
+									height: '150px',
+									aspectRatio: '1'
+								}}
+							/>
+						</Stack>
+					</Paper>
+				</Carousel.Slide>
+			)
+		}
+
+		return data.map((item) => (
+			<Carousel.Slide key={item.id}>
+				<MangaCard
+					badgeText={itemBadgeText}
+					accentColor={accentColor}
+					{...item}
+				/>
+			</Carousel.Slide>
+		))
+	}, [accentColor, data, itemBadgeText, sectionTitle])
 
 	return (
 		<Box>
-			<Link href='/manga' passHref>
-				<Anchor underline={false}>
-					<Title order={2} color='red'>
-						{sectionTitle}
-					</Title>
-				</Anchor>
-			</Link>
+			<Title order={2} color={accentColor}>
+				{sectionTitle}
+			</Title>
 			<Carousel
+				draggable={data.length !== 0}
 				height={400}
-				slideSize='30%'
+				slideSize={data.length === 0 ? '100%' : '30%'}
 				slideGap='xl'
 				align='start'
 				mt='md'
