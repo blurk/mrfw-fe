@@ -3,43 +3,46 @@ import {
 	Box,
 	Button,
 	Container,
+	Group,
 	Paper,
 	PasswordInput,
 	Text,
 	TextInput,
 	Title
 } from '@mantine/core'
-import { useForm, yupResolver } from '@mantine/form'
 import Link from 'next/link'
+import { useForm, yupResolver } from '@mantine/form'
+import { SignUpRequest } from 'types'
+import { signUpSchema } from 'utils/schemas'
 import { memo } from 'react'
-import { LoginRequest } from 'types'
-import { loginSchema } from 'utils/schemas'
+import { useDisclosure } from '@mantine/hooks'
 
 interface Props {
-	handleSubmit: (data: LoginRequest) => void
+	handleSubmit: (data: SignUpRequest) => void
 	overlay: JSX.Element
 }
 
 const Form = ({ handleSubmit, overlay }: Props) => {
-	const { onSubmit, getInputProps } = useForm<LoginRequest>({
-		validate: yupResolver(loginSchema),
-		initialValues: loginSchema.cast({})
+	const { onSubmit, getInputProps } = useForm<SignUpRequest>({
+		validate: yupResolver(signUpSchema),
+		initialValues: signUpSchema.cast({})
 	})
+
+	const [visible, { toggle }] = useDisclosure(false)
 
 	return (
 		<Container size={420} my={40} sx={{ position: 'relative' }}>
-			{overlay}
 			<Title
 				align='center'
 				sx={(theme) => ({
 					fontFamily: `Greycliff CF, ${theme.fontFamily}`,
 					fontWeight: 900
 				})}>
-				Đăng nhập
+				Đăng ký
 			</Title>
 			<Text color='dimmed' size='sm' align='center' mt={5}>
-				Bạn chưa có tài khoản? Đăng ký ở{' '}
-				<Link href='/sign-up' passHref>
+				Bạn đã có tài khoản? Đăng nhập ở{' '}
+				<Link href='/login' passHref>
 					<Anchor<'a'> size='sm'>đây nè.</Anchor>
 				</Link>
 			</Text>
@@ -53,23 +56,28 @@ const Form = ({ handleSubmit, overlay }: Props) => {
 					/>
 					<PasswordInput
 						label='Mật khẩu'
-						placeholder='Mật khẩu của bạn ở đây nha'
+						placeholder='Mật khẩu của bạn ở đây'
 						mt='md'
 						{...getInputProps('password')}
+						visible={visible}
+						onVisibilityChange={toggle}
 					/>
-					<Box mt='md'>
-						Bạn quên mật khẩu?{' '}
-						<Link href='/forgot-password'>
-							<Anchor<'a'>>Vào đây nhé!</Anchor>
-						</Link>
-					</Box>
+					<PasswordInput
+						label='Nhập lại mật khẩu'
+						placeholder='Nhập lại mật khẩu của bạn ở đây nha'
+						mt='md'
+						{...getInputProps('passwordConfirm')}
+						visible={visible}
+						onVisibilityChange={toggle}
+					/>
 					<Button fullWidth mt='xl' type='submit'>
-						Đăng nhập
+						Đăng ký
 					</Button>
 				</form>
 			</Paper>
+			{overlay}
 		</Container>
 	)
 }
 
-export const FormLogin = memo(Form)
+export default memo(Form)

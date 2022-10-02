@@ -65,7 +65,21 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
 					transformToFormData(data)
 				)
 			} else {
-				await client.records.create('mangas', transformToFormData(data))
+				// Create the manga
+				const manga = await client.records.create(
+					'mangas',
+					transformToFormData({ ...data })
+				)
+
+				// Create a row in views table
+				const view = await client.records.create('views', {
+					manga: manga.id
+				})
+
+				// Update the manga with the new view
+				await client.records.update('mangas', manga.id, {
+					view: view.id
+				})
 			}
 			toast.success(
 				editData ? 'Lưu chỉnh sửa thành công' : 'Thêm mới thành công'

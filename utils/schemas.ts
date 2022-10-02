@@ -1,4 +1,4 @@
-import { array, mixed, object, string } from 'yup'
+import { array, mixed, object, ref, string } from 'yup'
 
 export const loginSchema = object().shape({
 	email: string()
@@ -9,6 +9,35 @@ export const loginSchema = object().shape({
 		.min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
 		.required('Mật khẩu không được để trống')
 		.default('')
+})
+
+export const signUpSchema = object().shape({
+	email: string()
+		.email('Email không hợp lệ')
+		.required('Email không được để trống')
+		.default(''),
+	password: string()
+		.min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
+		.required('Mật khẩu không được để trống')
+		.default(''),
+	passwordConfirm: string()
+		.min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
+		.required('Mật khẩu không được để trống')
+		.default('')
+		.oneOf([ref('password'), null], '2 mật khẩu phải trùng nhau')
+})
+
+export const updatePassword = object().shape({
+	token: string().required('Email không được để trống').default(''),
+	password: string()
+		.min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
+		.required('Mật khẩu không được để trống')
+		.default(''),
+	passwordConfirm: string()
+		.min(6, 'Mật khẩu phải có ít nhất 6 ký tự.')
+		.required('Mật khẩu không được để trống')
+		.default('')
+		.oneOf([ref('password'), null], '2 mật khẩu phải trùng nhau')
 })
 
 export const uploadMangaSchema = object().shape({

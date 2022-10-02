@@ -1,12 +1,9 @@
-import {
-	BasePocketbaseCollection,
-	BasePocketbaseRecord,
-	BasePocketbaseRecordRaw
-} from './base'
+import { BasePocketbaseCollection, BasePocketbaseRecord } from './base'
 import { Author } from './author'
 import { Chapter } from './chapter'
 import { Genre } from './genre'
 import { Profile } from './profile'
+import { View } from './views'
 
 export interface MangaExpand {
 	upload_by: Profile
@@ -14,6 +11,7 @@ export interface MangaExpand {
 	author: Author[]
 	chapters: Chapter[]
 	comments: Comment[]
+	view: View
 }
 
 export interface Manga extends BasePocketbaseRecord {
@@ -26,7 +24,7 @@ export interface Manga extends BasePocketbaseRecord {
 	chapters: string[]
 	comments: string[]
 	upload_by: string
-	views: number
+	view: string
 	expand?: MangaExpand
 }
 

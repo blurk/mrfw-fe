@@ -1,10 +1,7 @@
-import { Box, Loader, Paper } from '@mantine/core'
 import ChapterViewer from 'components/atoms/ChapterViewer'
 import { MangaInfoCard } from 'components/atoms/MangaInfoCard'
-import { MangaPageHero } from 'components/atoms/MangaPageHero'
 import { GetServerSidePropsContext, NextPage } from 'next'
 import { NextSeo } from 'next-seo'
-import { Suspense, useEffect } from 'react'
 import client from 'services/initPocketBase'
 import { Manga } from 'types'
 import {
@@ -45,7 +42,7 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
 				}
 				created={mangaDetails.created}
 				updated={mangaDetails.updated}
-				views={mangaDetails.views ?? 0}
+				views={mangaDetails.expand?.view.count ?? 0}
 				genres={getGenresName(mangaDetails.expand?.genres ?? [])}
 				authors={getAuthorsName(mangaDetails.expand?.author ?? [])}
 				cover={getImageUrl('mangas', mangaDetails.id, mangaDetails.cover)}
@@ -64,7 +61,7 @@ export const getServerSideProps = async ({
 	query
 }: GetServerSidePropsContext) => {
 	const res = await client.records.getOne('mangas', query.id as string, {
-		expand: 'upload_by,genres,author,chapters,comments'
+		expand: 'upload_by,genres,author,chapters,comments,view'
 	})
 
 	const mangaDetails = serverDataTransform(JSON.parse(JSON.stringify(res)))

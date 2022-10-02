@@ -12,6 +12,6 @@ export const formatDate = (value: string) =>
 
 export const getTodayStartTime = () => dayjs().format('YYYY-MM-DD 00:00:00')
 export const getThisWeekStartTime = () =>
-	dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00')
+	dayjs().subtract(7, 'day').format('YYYY-MM-DD 00:00:00')
 
 export const relativeTimeFromNow = (value: string) => dayjs(value).fromNow()

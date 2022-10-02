@@ -1,20 +1,14 @@
-import { AutocompleteItem } from '@mantine/core'
 import { User } from 'pocketbase'
-import {
-	Author,
-	ChapterList,
-	Genre,
-	Manga,
-	MangaList,
-	MangaListRaw,
-	MangaRaw
-} from 'types'
+import { Author, ChapterList, Genre, Manga, MangaListRaw } from 'types'
 import { serverDataTransform } from 'utils'
 import client from './initPocketBase'
 
-export const uploadedMangaByUser = (): Promise<MangaListRaw> =>
+export const uploadedMangaByUser = (
+	page = 1,
+	pageSize = 10
+): Promise<MangaListRaw> =>
 	client.records
-		.getList('mangas', 1, 10, {
+		.getList('mangas', page, pageSize, {
 			filter: `upload_by = "${(client.authStore.model as User).profile!.id}"`,
 			expand: 'author, genres',
 			sort: '-created'

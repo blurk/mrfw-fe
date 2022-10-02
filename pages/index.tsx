@@ -15,9 +15,14 @@ import { getServerSidePropsPageIndex } from '../services/getServerSideProps'
 interface Props {
 	recentlyUpdatedMangas: Manga[]
 	newMangas: Manga[]
+	hotMangas: Manga[]
 }
 
-const Home: NextPage<Props> = ({ newMangas, recentlyUpdatedMangas }) => {
+const Home: NextPage<Props> = ({
+	newMangas,
+	recentlyUpdatedMangas,
+	hotMangas
+}) => {
 	return (
 		<>
 			<NextSeo
@@ -40,6 +45,13 @@ const Home: NextPage<Props> = ({ newMangas, recentlyUpdatedMangas }) => {
 					itemBadgeText={MangaSectionItemBadge.NEW}
 					accentColor={MangaSectionColor.NEW}
 					data={newMangas}
+				/>
+
+				<MangaSection
+					sectionTitle={MangaSectionTitle.HOT}
+					itemBadgeText={MangaSectionItemBadge.HOT}
+					accentColor={MangaSectionColor.HOT}
+					data={hotMangas}
 				/>
 			</Stack>
 		</>

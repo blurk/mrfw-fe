@@ -14,15 +14,18 @@ export enum MangaStatusText {
 
 export enum MangaSectionTitle {
 	RECENTLY_UPDATED = 'Truyện mới cập nhật hôm nay',
-	NEW = 'Truyện mới đăng tải'
+	NEW = 'Truyện mới đăng tải',
+	HOT = 'Truyện nhiều người xem'
 }
 
 export enum MangaSectionItemBadge {
 	RECENTLY_UPDATED = 'mới cập nhật',
-	NEW = 'mới đăng tải'
+	NEW = 'mới đăng tải',
+	HOT = 'nhiều người xem'
 }
 
 export enum MangaSectionColor {
 	RECENTLY_UPDATED = 'red',
-	NEW = 'green'
+	NEW = 'green',
+	HOT = 'yellow'
 }

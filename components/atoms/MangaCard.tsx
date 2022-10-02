@@ -1,4 +1,4 @@
-import { IconBookmark, IconHeart, IconShare, IconUser } from '@tabler/icons'
+import { IconBookmark, IconEye, IconHeart, IconUser } from '@tabler/icons'
 import {
 	Card,
 	Text,
@@ -9,7 +9,8 @@ import {
 	Avatar,
 	createStyles,
 	Tooltip,
-	Anchor
+	Anchor,
+	Space
 } from '@mantine/core'
 import { Manga } from 'types'
 import Image from 'next/image'
@@ -123,20 +124,44 @@ export const MangaCard = ({
 
 			<Group position='apart' className={classes.footer}>
 				<Center>
-					{expand?.upload_by?.avatar ? (
-						<Avatar
-							src={getImageUrl(collectionId, id, expand.upload_by.avatar)}
-							size={24}
-							radius='xl'
-							mr='xs'
-						/>
-					) : (
-						<IconUser size={18} />
-					)}
+					<Tooltip
+						label={`Đăng bởi ${expand?.upload_by?.name ?? 'người dùng'}`}
+						withArrow>
+						<Group spacing={2}>
+							{expand?.upload_by?.avatar ? (
+								<Avatar
+									src={getImageUrl(
+										'profiles',
+										expand.upload_by.id,
+										expand.upload_by.avatar
+									)}
+									size={24}
+									radius='xl'
+								/>
+							) : (
+								<IconUser size={18} />
+							)}
 
-					<Text size='sm' inline ml={4}>
-						{expand?.upload_by?.name ?? 'Ẩn Danh'}
-					</Text>
+							<Text
+								size='sm'
+								inline
+								ml={4}
+								sx={{ maxWidth: '10ch' }}
+								lineClamp={1}>
+								{expand?.upload_by?.name ?? 'người dùng'}
+							</Text>
+						</Group>
+					</Tooltip>
+
+					<Space w='xs' />
+					<Tooltip label='Lượt xem' withArrow>
+						<Center>
+							<IconEye size={18} />
+							<Text size='sm' inline ml={4}>
+								{expand?.view.count ?? 0}
+							</Text>
+						</Center>
+					</Tooltip>
 				</Center>
 
 				<Group spacing={8}>
@@ -146,15 +171,9 @@ export const MangaCard = ({
 						</ActionIcon>
 					</Tooltip>
 
-					<Tooltip label='Bookmark' withArrow>
+					<Tooltip label='Bookmark' withArrow withinPortal>
 						<ActionIcon className={classes.action} aria-label='Bookmark'>
 							<IconBookmark size={16} color={theme.colors.yellow[7]} />
-						</ActionIcon>
-					</Tooltip>
-
-					<Tooltip label='Chia sẻ' withArrow>
-						<ActionIcon className={classes.action} aria-label='Chia sẻ'>
-							<IconShare size={16} />
 						</ActionIcon>
 					</Tooltip>
 

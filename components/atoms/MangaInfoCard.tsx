@@ -1,20 +1,16 @@
 import {
-	Anchor,
 	Badge,
 	Box,
 	Button,
 	Card,
 	createStyles,
-	Grid,
 	Group,
 	Overlay,
 	Paper,
 	Spoiler,
-	Table,
-	Text,
-	ThemeIcon
+	Text
 } from '@mantine/core'
-import { IconBookmark, IconCategory, IconHeart } from '@tabler/icons'
+import { IconBookmark, IconHeart } from '@tabler/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatDate, MangaStatusText, relativeTimeFromNow } from 'utils'
@@ -121,7 +117,11 @@ export function MangaInfoCard({
 				</Box>
 			</Card.Section>
 
-			<Card.Section className={classes.section} mt='md' pl='calc(10% + 150px)'>
+			<Card.Section
+				className={classes.section}
+				mt='md'
+				pl='calc(10% + 150px)'
+				sx={{ minHeight: 120 }}>
 				<Group position='apart'>
 					<Text size='lg' weight={500}>
 						{title}

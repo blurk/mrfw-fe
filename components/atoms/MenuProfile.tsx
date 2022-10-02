@@ -1,4 +1,4 @@
-import { Button, Menu, useMantineTheme } from '@mantine/core'
+import { Avatar, Button, Menu, useMantineTheme } from '@mantine/core'
 import { useToggle } from '@mantine/hooks'
 import {
 	IconBook,
@@ -7,12 +7,13 @@ import {
 	IconMessage,
 	IconStar,
 	IconTrash,
+	IconUser,
 	IconUserCircle
 } from '@tabler/icons'
 import Link from 'next/link'
 import Router from 'next/router'
 import { logout } from 'services/initPocketBase'
-import { useSession } from 'utils'
+import { getImageUrl, useSession } from 'utils'
 
 type Props = {}
 
@@ -46,29 +47,65 @@ const MenuProfile = ({}: Props) => {
 			onClose={toggle.bind(false)}
 			onOpen={toggle.bind(true)}>
 			<Menu.Target>
-				<Button leftIcon={<IconUserCircle />} variant='gradient'>
-					{user.profile ? user.profile.name : 'Loading...'}
+				<Button
+					leftIcon={
+						user.profile?.avatar ? (
+							<Avatar
+								src={getImageUrl(
+									'profiles',
+									user.profile.id,
+									user.profile.avatar
+								)}
+								size={24}
+								radius='xl'
+							/>
+						) : (
+							<IconUser size={18} />
+						)
+					}
+					variant='gradient'>
+					{user.profile ? user.profile.name || 'người dùng' : 'Loading...'}
 				</Button>
 			</Menu.Target>
+
+			{/* TODO: add this feats later */}
 			<Menu.Dropdown>
 				<Menu.Item
+					disabled
 					icon={
 						<IconHeart size={14} stroke={1.5} color={theme.colors.red[6]} />
 					}>
 					Truyện đã thích
 				</Menu.Item>
 				<Menu.Item
+					disabled
 					icon={
 						<IconStar size={14} stroke={1.5} color={theme.colors.yellow[6]} />
 					}>
 					Truyện đang theo dõi
 				</Menu.Item>
-				<Menu.Item
+				{/* <Menu.Item
+					disabled
 					icon={
 						<IconMessage size={14} stroke={1.5} color={theme.colors.blue[6]} />
 					}>
 					Bình luận của bạn
-				</Menu.Item>
+				</Menu.Item> */}
+
+				<Menu.Divider />
+				<Menu.Label>Quản lý</Menu.Label>
+				<Link href='/manage/profile'>
+					<Menu.Item
+						icon={
+							<IconUserCircle
+								size={14}
+								stroke={1.5}
+								color={theme.colors.green[6]}
+							/>
+						}>
+						Quản lý thông tin tài khoản
+					</Menu.Item>
+				</Link>
 				<Link href='/manage'>
 					<Menu.Item
 						icon={
@@ -82,11 +119,15 @@ const MenuProfile = ({}: Props) => {
 					onClick={handleLogoutClick}>
 					Đăng xuất
 				</Menu.Item>
-				<Menu.Divider />
 
+				<Menu.Divider />
 				<Menu.Label>Vùng nguy hiểm</Menu.Label>
 
-				<Menu.Item color='red' icon={<IconTrash size={14} stroke={1.5} />}>
+				{/* TODO: add this feat later */}
+				<Menu.Item
+					color='red'
+					icon={<IconTrash size={14} stroke={1.5} />}
+					disabled>
 					Xóa tài khoản
 				</Menu.Item>
 			</Menu.Dropdown>

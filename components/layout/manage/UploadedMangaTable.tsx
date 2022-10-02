@@ -7,10 +7,10 @@ import {
 	Text,
 	Tooltip
 } from '@mantine/core'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { uploadedMangaByUser } from 'services/fetchers'
 import client from 'services/initPocketBase'
-import useSWR, { mutate } from 'swr'
+import useSWR, { mutate, useSWRConfig } from 'swr'
 import { MangaList, MangaRaw } from 'types'
 
 import { useDisclosure } from '@mantine/hooks'
@@ -77,9 +77,28 @@ const columns = [
 ]
 
 const UploadedMangaTable = ({ showDrawer }: Props) => {
-	const { data } = useSWR<MangaList>('uploaded-manga', uploadedMangaByUser, {
-		isPaused: () => client.authStore.model == null
+	const [{ pageIndex, pageSize }, setPagination] = useState<{
+		pageIndex: number
+		pageSize: number
+	}>({
+		pageIndex: 0,
+		pageSize: 10
 	})
+
+	const { data } = useSWR<MangaList>(
+		'uploaded-manga',
+		() => uploadedMangaByUser(pageIndex + 1, pageSize),
+		{
+			isPaused: () => client.authStore.model == null
+		}
+	)
+
+	const { mutate } = useSWRConfig()
+
+	// Manually revalidate when pagination options change
+	useEffect(() => {
+		mutate('uploaded-manga')
+	}, [mutate, pageIndex, pageSize])
 
 	const { updateEditData } = useFormState() as UseFormStateReturn<MangaRaw>
 
@@ -146,10 +165,24 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
 		]
 	}, [onDelete, onEdit])
 
+	const pagination = useMemo(
+		() => ({
+			pageIndex,
+			pageSize
+		}),
+		[pageIndex, pageSize]
+	)
+
 	const table = useReactTable({
 		data: data?.items ?? [],
 		columns: columnsWithActions,
-		getCoreRowModel: getCoreRowModel()
+		getCoreRowModel: getCoreRowModel(),
+		state: {
+			pagination
+		},
+		onPaginationChange: setPagination,
+		pageCount: data ? Math.ceil(data.totalItems / data.perPage) : -1, // page count
+		manualPagination: true
 	})
 
 	const onDeleteConfirm = async () => {
@@ -184,7 +217,7 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
 				}
 			/>
 
-			<BaseTable table={table} />
+			<BaseTable table={table} hasPagination />
 		</>
 	)
 }

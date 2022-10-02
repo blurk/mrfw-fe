@@ -1,16 +1,18 @@
 import { Title } from '@mantine/core'
 import { NextPage } from 'next'
-import Link from 'next/link'
-import React from 'react'
+import Head from 'next/head'
 
 type Props = {}
 
 const PageMangaIndex: NextPage<Props> = (props) => {
 	return (
-		<div>
+		<>
+			<Head>
+				<title>Danh sách truyện</title>
+			</Head>
+
 			<Title>Danh sách truyện</Title>
-			<Link href='/manga/vcj52yk7kuq1ldo'>To manga</Link>
-		</div>
+		</>
 	)
 }
 

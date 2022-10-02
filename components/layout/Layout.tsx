@@ -14,13 +14,13 @@ const Layout = ({ children }: Props) => {
 			<AppShell
 				styles={{
 					main: {
-						background: theme.colors.gray[0]
+						background: theme.colors.gray[1]
 					}
 				}}
 				navbarOffsetBreakpoint='sm'
 				asideOffsetBreakpoint='sm'
 				header={<Header />}>
-				<Container>{children}</Container>
+				<Container mb='30vh'>{children}</Container>
 			</AppShell>
 			<Footer />
 		</>
