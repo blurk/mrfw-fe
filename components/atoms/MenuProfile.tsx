@@ -2,10 +2,9 @@ import { Avatar, Button, Menu, useMantineTheme } from '@mantine/core'
 import { useToggle } from '@mantine/hooks'
 import {
 	IconBook,
+	IconBookmark,
 	IconHeart,
 	IconLogout,
-	IconMessage,
-	IconStar,
 	IconTrash,
 	IconUser,
 	IconUserCircle
@@ -63,7 +62,7 @@ const MenuProfile = ({}: Props) => {
 							<IconUser size={18} />
 						)
 					}
-					variant='gradient'>
+					variant={user.profile ? 'outline' : 'gradient'}>
 					{user.profile ? user.profile.name || 'người dùng' : 'Loading...'}
 				</Button>
 			</Menu.Target>
@@ -80,7 +79,11 @@ const MenuProfile = ({}: Props) => {
 				<Menu.Item
 					disabled
 					icon={
-						<IconStar size={14} stroke={1.5} color={theme.colors.yellow[6]} />
+						<IconBookmark
+							size={14}
+							stroke={1.5}
+							color={theme.colors.yellow[6]}
+						/>
 					}>
 					Truyện đang theo dõi
 				</Menu.Item>

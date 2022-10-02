@@ -78,17 +78,19 @@ const ChapterViewer = ({ data }: Props) => {
 				</Button>
 			</Group>
 
-			<Group grow pr='lg' mb='sm'>
-				<Title order={4}>Tên chương</Title>
-				<Center inline>
-					<Title order={4}>Ngày đăng</Title>
-					{sortBy === 'old' ? (
-						<IconArrowUp size={18} />
-					) : (
-						<IconArrowDown size={18} />
-					)}
-				</Center>
-			</Group>
+			{data.length > 0 && (
+				<Group grow pr='lg' mb='sm'>
+					<Title order={4}>Tên chương</Title>
+					<Center inline>
+						<Title order={4}>Ngày đăng</Title>
+						{sortBy === 'old' ? (
+							<IconArrowUp size={18} />
+						) : (
+							<IconArrowDown size={18} />
+						)}
+					</Center>
+				</Group>
+			)}
 
 			{data.length === 0 ? (
 				<Stack justify='center' sx={{ height: 300 }}>

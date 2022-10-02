@@ -32,6 +32,7 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
 			/>
 
 			<MangaInfoCard
+				id={mangaDetails.id}
 				title={mangaDetails.title}
 				status={mangaDetails.status}
 				description={mangaDetails.description}

@@ -1,4 +1,5 @@
 import { User } from 'pocketbase'
+import { Profile } from './profile'
 
 export interface LoginRequest {
 	email: string
@@ -31,15 +32,4 @@ export interface SignUpResponse {
 	lastResetSentAt: string
 	lastVerificationSentAt: string
 	profile: Profile
-}
-
-export interface Profile {
-	'@collectionId': string
-	'@collectionName': string
-	id: string
-	userId: string
-	name: string
-	avatar: null | string
-	updated: string
-	created: string
 }

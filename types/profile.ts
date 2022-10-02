@@ -1,6 +1,8 @@
-import { BasePocketbaseRecord } from './base'
+import { BasePocketbaseRecordRaw } from './base'
 
-export interface Profile extends BasePocketbaseRecord {
+export interface Profile extends BasePocketbaseRecordRaw {
+	userId: string
 	name: string
-	avatar: string
+	avatar: null | string
+	bookmark: string[]
 }

@@ -1,7 +1,8 @@
-import { Stack, Text } from '@mantine/core'
+import { Button, Group, Stack, Text } from '@mantine/core'
 import MangaSection from 'components/atoms/MangaSection'
 import type { NextPage } from 'next'
 import { NextSeo } from 'next-seo'
+import Link from 'next/link'
 import { HomePageContent } from 'seo'
 import { Manga } from 'types'
 import {
@@ -54,6 +55,12 @@ const Home: NextPage<Props> = ({
 					data={hotMangas}
 				/>
 			</Stack>
+
+			<Group position='center' mt='xl'>
+				<Link href='/manga' passHref>
+					<Button>Xem toàn bộ truyện</Button>
+				</Link>
+			</Group>
 		</>
 	)
 }

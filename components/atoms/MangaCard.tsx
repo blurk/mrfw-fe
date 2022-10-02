@@ -16,6 +16,8 @@ import { Manga } from 'types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getImageUrl } from 'utils'
+import client from 'services/initPocketBase'
+import MangaCardFooter from './MangaCardFooter'
 
 const useStyles = createStyles((theme) => ({
 	card: {
@@ -63,8 +65,8 @@ const useStyles = createStyles((theme) => ({
 }))
 
 interface Props extends Manga {
-	badgeText: string
-	accentColor: string
+	badgeText?: string
+	accentColor?: string
 }
 
 export const MangaCard = ({
@@ -98,13 +100,15 @@ export const MangaCard = ({
 				</Link>
 			</Card.Section>
 
-			<Badge
-				className={classes.badge}
-				variant='gradient'
-				color='red'
-				gradient={{ from: `${accentColor}.4`, to: `${accentColor}.8` }}>
-				{badgeText}
-			</Badge>
+			{badgeText && (
+				<Badge
+					className={classes.badge}
+					variant='gradient'
+					color='red'
+					gradient={{ from: `${accentColor}.4`, to: `${accentColor}.8` }}>
+					{badgeText}
+				</Badge>
+			)}
 
 			<Link href={href} passHref>
 				<Text
@@ -118,10 +122,11 @@ export const MangaCard = ({
 				</Text>
 			</Link>
 
-			<Text size='sm' color='dimmed' lineClamp={4}>
+			<Text size='sm' color='dimmed' lineClamp={4} sx={{ height: 86 }}>
 				{description}
 			</Text>
 
+			{/* FOOTER */}
 			<Group position='apart' className={classes.footer}>
 				<Center>
 					<Tooltip
@@ -164,21 +169,7 @@ export const MangaCard = ({
 					</Tooltip>
 				</Center>
 
-				<Group spacing={8}>
-					<Tooltip label='Thích truyện' withArrow>
-						<ActionIcon className={classes.action} aria-label='Thích truyện'>
-							<IconHeart size={16} color={theme.colors.red[6]} />
-						</ActionIcon>
-					</Tooltip>
-
-					<Tooltip label='Bookmark' withArrow withinPortal>
-						<ActionIcon className={classes.action} aria-label='Bookmark'>
-							<IconBookmark size={16} color={theme.colors.yellow[7]} />
-						</ActionIcon>
-					</Tooltip>
-
-					<div></div>
-				</Group>
+				<MangaCardFooter classes={classes.action} mangaId={id} />
 			</Group>
 		</Card>
 	)

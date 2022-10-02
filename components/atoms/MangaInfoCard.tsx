@@ -10,10 +10,10 @@ import {
 	Spoiler,
 	Text
 } from '@mantine/core'
-import { IconBookmark, IconHeart } from '@tabler/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatDate, MangaStatusText, relativeTimeFromNow } from 'utils'
+import MangaInfoCardFooterActions from './MangaInfoCardActions'
 import MangaStatusBadge from './MangaStatusBadge'
 import SubInfo from './SubInfo'
 
@@ -53,6 +53,7 @@ interface Props {
 	views: number
 	latestChapter?: string
 	firstChapter?: string
+	id: string
 }
 
 export function MangaInfoCard({
@@ -67,7 +68,8 @@ export function MangaInfoCard({
 	updated,
 	views,
 	firstChapter,
-	latestChapter
+	latestChapter,
+	id
 }: Props) {
 	const { classes } = useStyles()
 
@@ -165,14 +167,7 @@ export function MangaInfoCard({
 					</Button>
 				</Link>
 
-				<Button color='red' leftIcon={<IconHeart size={18} stroke={1.5} />}>
-					Thích truyện
-				</Button>
-				<Button
-					color='yellow'
-					leftIcon={<IconBookmark size={18} stroke={1.5} />}>
-					Theo dõi truyện
-				</Button>
+				<MangaInfoCardFooterActions mangaId={id} />
 			</Group>
 		</Card>
 	)
