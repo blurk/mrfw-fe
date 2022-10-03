@@ -1,57 +1,45 @@
-import { Player } from '@lottiefiles/react-lottie-player'
-import { Autocomplete, Group, Text } from '@mantine/core'
-import Router from 'next/router'
-import { useEffect, useState } from 'react'
+import { Player } from "@lottiefiles/react-lottie-player";
+import { Autocomplete, Group, Select, Text } from "@mantine/core";
+import Router from "next/router";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
-	defaultValue: string
-	data: { value: string; label: string }[]
-}
+  defaultValue: string;
+  data: { value: string; label: string }[];
+};
 
-const ChapterSelection = ({ defaultValue, data }: Props) => {
-	const [value, setValue] = useState(defaultValue)
+const NothingFound = () => (
+  <Group spacing={4} position="center">
+    <Text color="dimmed" size="lg">
+      Không tìm thấy
+    </Text>
 
-	useEffect(() => {
-		setValue(defaultValue)
-	}, [defaultValue])
+    <Player
+      autoplay
+      loop
+      src="/lottie-files/no-data.json"
+      style={{
+        width: "18px",
+        aspectRatio: "1",
+      }}
+    />
+  </Group>
+);
 
-	return (
-		<Autocomplete
-			style={{
-				flex: 1
-			}}
-			value={value}
-			onChange={setValue}
-			data={data}
-			placeholder='Tìm chương'
-			onItemSubmit={(item) => {
-				setValue(item.label)
-				Router.push(`/manga/c/${item.value}`)
-			}}
-			filter={(value, item) =>
-				item.label
-					.toLocaleLowerCase()
-					.includes(value.toLocaleLowerCase().trim())
-			}
-			nothingFound={
-				<Group spacing={4} position='center'>
-					<Text color='dimmed' size='lg'>
-						Không tìm thấy
-					</Text>
+const ChapterSelection = ({ defaultValue, data }: Props) => (
+  <Select
+    style={{
+      flex: 1,
+    }}
+    searchable
+    defaultValue={defaultValue}
+    data={data}
+    placeholder="Tìm chương"
+    onChange={(item) => {
+      Router.push(`/manga/c/${item}`);
+    }}
+    nothingFound={<NothingFound />}
+  />
+);
 
-					<Player
-						autoplay
-						loop
-						src='/lottie-files/no-data.json'
-						style={{
-							width: '18px',
-							aspectRatio: '1'
-						}}
-					/>
-				</Group>
-			}
-		/>
-	)
-}
-
-export default ChapterSelection
+export default ChapterSelection;
