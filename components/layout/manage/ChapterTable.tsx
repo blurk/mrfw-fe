@@ -70,7 +70,7 @@ const ManageChaptersTable = ({ mid, showDrawer }: Props) => {
 
 	const onEdit = useCallback(
 		(row: Chapter) => {
-			showDrawer
+			showDrawer()
 			updateEditData(row)
 		},
 		[showDrawer, updateEditData]
