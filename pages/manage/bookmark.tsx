@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { getBookmark } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR, { useSWRConfig } from 'swr';
-import { Manga } from 'types';
 import { useSession } from 'utils';
 
 type Props = {};
@@ -17,11 +16,11 @@ const BookmarkPage: NextPage<Props> = (props) => {
 
   const { mutate } = useSWRConfig();
 
-  const { data, error, isValidating } = useSWR('bookmark', () => getBookmark(user!.profile!.id), {
+  const profileId = user?.profile ? user.profile.id : null;
+
+  const { data, error, isValidating } = useSWR(profileId ? [profileId] : null, getBookmark, {
     isPaused: () => client.authStore.model == null,
   });
-
-  console.log({ data, error, isValidating });
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -40,6 +39,8 @@ const BookmarkPage: NextPage<Props> = (props) => {
   if (!user || !user.profile) {
     return null;
   }
+
+  console.log(data);
 
   return (
     <>

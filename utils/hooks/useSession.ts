@@ -1,15 +1,13 @@
-import { User } from "pocketbase";
-import client, { getCurrentUser } from "services/initPocketBase";
-import useSWR from "swr";
+import { User } from 'pocketbase';
+import client, { getCurrentUser } from 'services/initPocketBase';
+import useSWR from 'swr';
 
 export function useSession() {
-  const { data, mutate, error } = useSWR(
-    "api_user",
-    client.authStore.model ? getCurrentUser : () => null,
-    {
-      isPaused: () => client.authStore.model === null,
-    }
-  );
+  const { data, mutate, error } = useSWR(client.authStore.model ? 'api_user' : null, getCurrentUser, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    errorRetryCount: 1,
+  });
 
   return {
     user: data ?? null,

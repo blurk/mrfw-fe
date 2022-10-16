@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['127.0.0.1', 'https://66fb-222-252-30-231.ap.ngrok.io'],
+    domains: [process.env.NODE_ENV === 'development' ? '127.0.0.1' : process.env.DOMAIN],
   },
 };
 
