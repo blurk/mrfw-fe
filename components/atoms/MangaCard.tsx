@@ -1,61 +1,11 @@
-import { IconBookmark, IconEye, IconHeart, IconUser } from '@tabler/icons';
-import {
-  Card,
-  Text,
-  ActionIcon,
-  Badge,
-  Group,
-  Center,
-  Avatar,
-  createStyles,
-  Tooltip,
-  Anchor,
-  Space,
-} from '@mantine/core';
-import { Manga } from 'types';
+import { Anchor, Avatar, Badge, Card, Center, createStyles, Group, Space, Text, Tooltip } from '@mantine/core';
+import { IconEye, IconUser } from '@tabler/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Manga } from 'types';
 import { getImageUrl } from 'utils';
-import client from 'services/initPocketBase';
-import MangaCardFooter from './MangaCardFooter';
-
-const useStyles = createStyles((theme) => ({
-  card: {
-    position: 'relative',
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-  },
-
-  cover: {
-    position: 'relative',
-    height: 180,
-    width: '100%',
-    aspectRatio: '1',
-    display: 'block',
-  },
-
-  badge: {
-    position: 'absolute',
-    top: theme.spacing.xs,
-    right: theme.spacing.xs + 2,
-    pointerEvents: 'none',
-  },
-
-  title: {
-    marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.xs / 2,
-  },
-
-  action: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    ...theme.fn.hover({
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-    }),
-  },
-
-  footer: {
-    marginTop: theme.spacing.md,
-  },
-}));
+import BookmarkButton from './BookmarkButton';
+import LikeButton from './LikeButton';
 
 interface Props extends Manga {
   badgeText?: string;
@@ -137,8 +87,58 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
           </Tooltip>
         </Center>
 
-        <MangaCardFooter classes={classes.action} mangaId={id} />
+        <Group spacing={8} mt="auto">
+          <Tooltip label="Thích truyện" withArrow>
+            <span>
+              <LikeButton classes={classes.action} mangaId={id} onlyIcon />
+            </span>
+          </Tooltip>
+
+          <Tooltip label="Theo dõi truyện" withArrow withinPortal>
+            <span>
+              <BookmarkButton classes={classes.action} mangaId={id} onlyIcon />
+            </span>
+          </Tooltip>
+        </Group>
       </Group>
     </Card>
   );
 };
+
+const useStyles = createStyles((theme) => ({
+  card: {
+    position: 'relative',
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+  },
+
+  cover: {
+    position: 'relative',
+    height: 180,
+    width: '100%',
+    aspectRatio: '1',
+    display: 'block',
+  },
+
+  badge: {
+    position: 'absolute',
+    top: theme.spacing.xs,
+    right: theme.spacing.xs + 2,
+    pointerEvents: 'none',
+  },
+
+  title: {
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.xs / 2,
+  },
+
+  action: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    ...theme.fn.hover({
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+    }),
+  },
+
+  footer: {
+    marginTop: theme.spacing.md,
+  },
+}));

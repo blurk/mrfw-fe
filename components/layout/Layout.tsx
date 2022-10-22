@@ -1,30 +1,36 @@
-import { AppShell, Container, useMantineTheme } from '@mantine/core'
-import Footer from './Footer'
-import Header from './Header'
+import { AppShell, Container, useMantineTheme } from '@mantine/core';
+import NeedLoginDialog from 'components/atoms/NeedLoginDialog';
+import useNeedLoginDialog from 'utils/hooks/useNeedLoginDialog';
+import Footer from './Footer';
+import Header from './Header';
 
 type Props = {
-	children?: JSX.Element | JSX.Element[]
-}
+  children?: JSX.Element | JSX.Element[];
+};
 
 const Layout = ({ children }: Props) => {
-	const theme = useMantineTheme()
+  const theme = useMantineTheme();
+  const { isShow, hide } = useNeedLoginDialog();
 
-	return (
-		<>
-			<AppShell
-				styles={{
-					main: {
-						background: theme.colors.gray[1]
-					}
-				}}
-				navbarOffsetBreakpoint='sm'
-				asideOffsetBreakpoint='sm'
-				header={<Header />}>
-				<Container mb='30vh'>{children}</Container>
-			</AppShell>
-			<Footer />
-		</>
-	)
-}
+  return (
+    <>
+      <NeedLoginDialog opened={isShow} close={hide} />
 
-export default Layout
+      <AppShell
+        styles={{
+          main: {
+            background: theme.colors.gray[1],
+          },
+        }}
+        navbarOffsetBreakpoint="sm"
+        asideOffsetBreakpoint="sm"
+        header={<Header />}
+      >
+        <Container mb="30vh">{children}</Container>
+      </AppShell>
+      <Footer />
+    </>
+  );
+};
+
+export default Layout;

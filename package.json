@@ -26,6 +26,7 @@
 		"@tanstack/react-table": "^8.5.13",
 		"dayjs": "^1.11.5",
 		"embla-carousel-react": "^7.0.3",
+		"lodash": "^4.17.21",
 		"next": "12.3.0",
 		"next-seo": "^5.5.0",
 		"pocketbase": "^0.7.1",
