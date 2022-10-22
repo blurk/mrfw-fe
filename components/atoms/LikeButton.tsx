@@ -49,7 +49,7 @@ const LikeButton = ({ mangaId, onlyIcon, classes }: Props) => {
       onClick={onClick}
       leftIcon={<IconHeart size={18} fill={isLiked ? theme.colors.red[7] : 'transparent'} />}
     >
-      {isLiked ? 'Bỏ thích truyện' : 'Thích truyện'}
+      {isLiked ? 'Bỏ thích' : 'Thích truyện'}
     </Button>
   );
 };

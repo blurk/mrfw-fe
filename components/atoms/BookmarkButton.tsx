@@ -28,6 +28,11 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
           loading: 'Đang cập nhật danh sách theo dõi...',
           success: () => {
             mutate('api_user');
+
+            if (user.profile) {
+              mutate([user.profile.id]);
+            }
+
             return 'Cập nhật thành công';
           },
           error: 'Cập nhật thất bại',

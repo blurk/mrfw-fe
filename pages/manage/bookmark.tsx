@@ -1,24 +1,22 @@
-import { Badge, Card, Group, List, Paper, ScrollArea, SimpleGrid, Text, Title, Image } from '@mantine/core';
-import AppLoader from 'components/atoms/AppLoader';
+import { Player } from '@lottiefiles/react-lottie-player';
+import { Anchor, Button, Card, Group, Image, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { IconEye } from '@tabler/icons';
 import BookmarkButton from 'components/atoms/BookmarkButton';
-import LikeButton from 'components/atoms/LikeButton';
+import WithSuspense from 'components/atoms/WithSuspense';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import Router from 'next/router';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { getBookmark } from 'services/fetchers';
 import client from 'services/initPocketBase';
-import useSWR, { useSWRConfig } from 'swr';
-import { MangaStatusText, useSession } from 'utils';
-import MangaStatusBadge from 'components/atoms/MangaStatusBadge';
+import useSWR from 'swr';
+import { useSession } from 'utils';
 
 type Props = {};
 
 const BookmarkPage: NextPage<Props> = () => {
   const { user, isLoading } = useSession();
-
-  const { mutate } = useSWRConfig();
-
   const profileId = user?.profile ? user.profile.id : null;
 
   const { data } = useSWR(profileId ? [profileId] : null, getBookmark, {
@@ -37,7 +35,7 @@ const BookmarkPage: NextPage<Props> = () => {
   }
 
   return (
-    <>
+    <WithSuspense>
       <Head>
         <title>Danh sách truyện theo dõi</title>
       </Head>
@@ -46,47 +44,60 @@ const BookmarkPage: NextPage<Props> = () => {
         Danh sách truyện theo dõi
       </Title>
 
-      <Paper mt="lg" p="sm">
-        <SimpleGrid cols={3} spacing="lg">
+      {data.length > 0 ? (
+        <SimpleGrid cols={3} spacing="xl" mt="md">
           {data.map((manga) => (
             <Card shadow="sm" p="lg" radius="md" withBorder key={manga.id}>
               <Card.Section>
                 <Image
-                  src={client.records.getFileUrl(manga as any, manga.cover, { thumb: '0x160' })}
-                  height={160}
+                  src={client.records.getFileUrl(manga as any, manga.cover, { thumb: '300x100' })}
+                  height={100}
                   alt={manga.title}
                 />
               </Card.Section>
 
-              <Group position="apart" mt="md" mb="xs">
-                <Text weight={500}>{manga.title}</Text>
+              <Title lineClamp={1} order={3} size="xl" color="blue" mt="sm">
+                {manga.title}
+              </Title>
 
-                <MangaStatusBadge type={manga.status as keyof typeof MangaStatusText} />
-              </Group>
-
-              <Text size="sm" color="dimmed">
+              <Text lineClamp={3} sx={{ height: '5em' }}>
                 {manga.description}
               </Text>
-              <Group position="apart" align="start">
-                <span>{manga.title}</span>
 
+              <Group mt={'sm'}>
                 <BookmarkButton mangaId={manga.id} />
-                <LikeButton mangaId={manga.id} />
+
+                <Link href={'/manga/' + manga.id} passHref>
+                  <Button leftIcon={<IconEye size={18} />}>Đọc</Button>
+                </Link>
               </Group>
             </Card>
           ))}
         </SimpleGrid>
-      </Paper>
-    </>
+      ) : (
+        <Paper p="sm" mt="lg">
+          <Stack justify="center" sx={{ height: 300, width: '100%' }}>
+            <Text size="xl" color="dimmed" align="center" mb="md" weight={600}>
+              Bạn chưa theo dõi truyện nào cả, bạn hãy tìm truyện trong{' '}
+              <Link href="/manga">
+                <Anchor>danh sách </Anchor>
+              </Link>
+              nhé
+            </Text>
+            <Player
+              autoplay
+              loop
+              src="/lottie-files/no-data.json"
+              style={{
+                height: '150px',
+                aspectRatio: '1',
+              }}
+            />
+          </Stack>
+        </Paper>
+      )}
+    </WithSuspense>
   );
 };
 
-const BookmarkPageWithSuspense = () => (
-  <>
-    <Suspense fallback={<AppLoader />}>
-      <BookmarkPage />
-    </Suspense>
-  </>
-);
-
-export default BookmarkPageWithSuspense;
+export default BookmarkPage;
