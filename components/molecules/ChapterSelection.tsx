@@ -1,7 +1,6 @@
-import { Player } from "@lottiefiles/react-lottie-player";
-import { Autocomplete, Group, Select, Text } from "@mantine/core";
-import Router from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { Player } from '@lottiefiles/react-lottie-player';
+import { Group, Select, Text } from '@mantine/core';
+import Router from 'next/router';
 
 type Props = {
   defaultValue: string;
@@ -19,8 +18,8 @@ const NothingFound = () => (
       loop
       src="/lottie-files/no-data.json"
       style={{
-        width: "18px",
-        aspectRatio: "1",
+        width: '18px',
+        aspectRatio: '1',
       }}
     />
   </Group>

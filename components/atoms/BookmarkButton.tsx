@@ -28,9 +28,14 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
           loading: 'Đang cập nhật danh sách theo dõi...',
           success: () => {
             mutate('api_user');
-            return 'Cập nhật thành công';
+
+            if (user.profile) {
+              mutate([user.profile.id]);
+            }
+
+            return isBookmarked ? 'Bỏ theo dõi thành công' : 'Đã theo dõi';
           },
-          error: 'Cập nhật thất bại',
+          error: 'Có lỗi xảy ra ;_;',
         });
       } catch (error) {}
     } else {

@@ -1,25 +1,25 @@
 import { Player } from '@lottiefiles/react-lottie-player';
 import { Anchor, Button, Card, Group, Image, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { IconEye } from '@tabler/icons';
-import BookmarkButton from 'components/atoms/BookmarkButton';
+import LikeButton from 'components/atoms/LikeButton';
 import WithSuspense from 'components/atoms/WithSuspense';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useEffect } from 'react';
-import { getBookmark } from 'services/fetchers';
+import { getLikedManga } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR from 'swr';
 import { useSession } from 'utils';
 
 type Props = {};
 
-const BookmarkPage: NextPage<Props> = () => {
+const LikedMangaPage: NextPage<Props> = () => {
   const { user, isLoading } = useSession();
   const profileId = user?.profile ? user.profile.id : null;
 
-  const { data } = useSWR(profileId ? [profileId] : null, getBookmark, {
+  const { data } = useSWR(profileId ? [profileId] : null, getLikedManga, {
     isPaused: () => client.authStore.model == null,
     suspense: true,
   });
@@ -37,11 +37,11 @@ const BookmarkPage: NextPage<Props> = () => {
   return (
     <WithSuspense>
       <Head>
-        <title>Danh sách truyện theo dõi</title>
+        <title>Danh sách truyện đã thích</title>
       </Head>
 
       <Title order={1} mt="md" color="gray.8">
-        Danh sách truyện theo dõi
+        Danh sách truyện đã thích
       </Title>
 
       {data.length > 0 ? (
@@ -65,7 +65,7 @@ const BookmarkPage: NextPage<Props> = () => {
               </Text>
 
               <Group mt={'sm'}>
-                <BookmarkButton mangaId={manga.id} />
+                <LikeButton mangaId={manga.id} />
 
                 <Link href={'/manga/' + manga.id} passHref>
                   <Button leftIcon={<IconEye size={18} />}>Đọc</Button>
@@ -78,7 +78,7 @@ const BookmarkPage: NextPage<Props> = () => {
         <Paper p="sm" mt="lg">
           <Stack justify="center" sx={{ height: 300, width: '100%' }}>
             <Text size="xl" color="dimmed" align="center" mb="md" weight={600}>
-              Bạn chưa theo dõi truyện nào cả, bạn hãy tìm truyện trong{' '}
+              Bạn chưa thích truyện nào cả, bạn hãy tìm truyện trong{' '}
               <Link href="/manga">
                 <Anchor>danh sách </Anchor>
               </Link>
@@ -100,4 +100,4 @@ const BookmarkPage: NextPage<Props> = () => {
   );
 };
 
-export default BookmarkPage;
+export default LikedMangaPage;

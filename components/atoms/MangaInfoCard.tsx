@@ -41,6 +41,7 @@ interface Props {
   latestChapter?: string;
   firstChapter?: string;
   id: string;
+  backgroundCover: string;
 }
 
 export function MangaInfoCard({
@@ -57,6 +58,7 @@ export function MangaInfoCard({
   firstChapter,
   latestChapter,
   id,
+  backgroundCover,
 }: Props) {
   const { classes } = useStyles();
 
@@ -83,6 +85,7 @@ export function MangaInfoCard({
         <Image src={cover} alt="cover" layout="fill" objectFit="cover" objectPosition="center" />
       </Paper>
 
+      {/* BACKGROUND WITH OVERLAY */}
       <Card.Section
         sx={{
           position: 'relative',
@@ -99,7 +102,7 @@ export function MangaInfoCard({
             height: 180,
           }}
         >
-          <Image src={cover} alt={title} layout="fill" objectFit="cover" />
+          <Image src={backgroundCover} alt={title} layout="fill" objectFit="cover" />
         </Box>
       </Card.Section>
 

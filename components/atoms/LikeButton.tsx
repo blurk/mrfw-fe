@@ -28,6 +28,11 @@ const LikeButton = ({ mangaId, onlyIcon, classes }: Props) => {
           loading: 'Đang cập nhật danh sách truyện thích...',
           success: () => {
             mutate('api_user');
+
+            if (user.profile) {
+              mutate([user.profile.id]);
+            }
+
             return isLiked ? 'Bỏ thích thành công' : 'Thích thành công';
           },
           error: 'Có lỗi xảy ra ;_;',
@@ -49,7 +54,7 @@ const LikeButton = ({ mangaId, onlyIcon, classes }: Props) => {
       onClick={onClick}
       leftIcon={<IconHeart size={18} fill={isLiked ? theme.colors.red[7] : 'transparent'} />}
     >
-      {isLiked ? 'Bỏ thích truyện' : 'Thích truyện'}
+      {isLiked ? 'Bỏ thích' : 'Thích truyện'}
     </Button>
   );
 };

@@ -13,7 +13,7 @@ interface Props extends Manga {
 }
 
 export const MangaCard = ({ cover, id, title, description, collectionId, expand, badgeText, accentColor }: Props) => {
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
 
   const href = `/manga/${id}`;
 
@@ -23,7 +23,7 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
         <Link href={href} passHref>
           <Anchor className={classes.cover}>
             <Image
-              src={getImageUrl(collectionId, id, cover)}
+              src={getImageUrl(collectionId, id, cover, '300x0f')}
               alt={title}
               layout="fill"
               objectFit="cover"
