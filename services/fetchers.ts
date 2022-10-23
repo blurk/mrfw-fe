@@ -1,5 +1,5 @@
 import { User } from 'pocketbase';
-import { Author, ChapterList, Genre, Manga, MangaListRaw } from 'types';
+import { Author, Chapter, ChapterList, Genre, Manga, MangaListRaw } from 'types';
 import { serverDataTransform } from 'utils';
 import client from './initPocketBase';
 
@@ -76,5 +76,34 @@ export const getBookmark = async (profileId: string) => {
     return bookmark as Manga[];
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getLikedManga = async (profileId: string) => {
+  try {
+    const res = await client.records.getOne('profiles', profileId, {
+      expand: 'liked',
+    });
+
+    const json = JSON.parse(JSON.stringify(res));
+
+    const liked = json.liked.length === 0 ? [] : json['@expand'].liked;
+
+    return liked as Manga[];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllChapters = async () => {
+  try {
+    const res = await client.records.getFullList('chapter');
+    const json = JSON.parse(JSON.stringify(res)) as Chapter[];
+
+    return json.map((chapter) => chapter.id) as string[];
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch posts, received message ${error.message}`);
+    }
   }
 };
