@@ -15,6 +15,14 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
   let firstChapter = undefined;
 
   if (mangaDetails.expand?.chapters) {
+    // Sort from old to new
+    mangaDetails.expand.chapters.sort((chapterA, chapterB) => {
+      const dateA = new Date(chapterA.created);
+      const dateB = new Date(chapterB.created);
+
+      return dateA.getTime() - dateB.getTime();
+    });
+
     latestChapter = mangaDetails.expand?.chapters.at(-1)?.id ?? undefined;
     firstChapter = mangaDetails.expand?.chapters.at(0)?.id ?? undefined;
   }
