@@ -1,6 +1,6 @@
-import { BasePocketbaseRecord } from './base'
+import { BasePocketbaseRecord } from './base';
 
 export interface Author extends BasePocketbaseRecord {
-	name: string
-	mangas: string[]
+  name: string;
+  mangas: string[];
 }

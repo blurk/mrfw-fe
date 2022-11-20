@@ -30,7 +30,7 @@
     "next": "12.3.0",
     "next-seo": "^5.5.0",
     "plaiceholder": "^2.5.0",
-    "pocketbase": "^0.7.1",
+    "pocketbase": "^0.7.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
