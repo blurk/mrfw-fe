@@ -1,5 +1,5 @@
 import { Badge, Box, Button, Card, createStyles, Group, Overlay, Paper, Spoiler, Text } from '@mantine/core';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { formatDate, MangaStatusText, relativeTimeFromNow } from 'utils';
 import BookmarkButton from './BookmarkButton';

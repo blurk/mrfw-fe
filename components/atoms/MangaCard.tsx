@@ -1,6 +1,6 @@
 import { Anchor, Avatar, Badge, Card, Center, createStyles, Group, Space, Text, Tooltip } from '@mantine/core';
 import { IconEye, IconUser } from '@tabler/icons';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { Manga } from 'types';
 import { getImageUrl } from 'utils';

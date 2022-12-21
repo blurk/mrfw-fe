@@ -4,7 +4,7 @@ import ScrollToTop from 'components/atoms/ScrollToTop';
 import ChapterSelection from 'components/molecules/ChapterSelection';
 import { GetStaticProps, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
-import Image from 'next/future/image';
+import Image from "next/image";
 import Link from 'next/link';
 import { getPlaiceholder, IGetPlaiceholderReturn } from 'plaiceholder';
 import { ParsedUrlQuery } from 'querystring';

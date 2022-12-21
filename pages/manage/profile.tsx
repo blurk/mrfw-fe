@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import FormChangePassword from 'components/form/FormChangePassword';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Router from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
