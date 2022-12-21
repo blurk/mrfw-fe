@@ -14,6 +14,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import { Chapter } from 'types';
 import { formatDate } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
+import { Routes } from 'utils/routes';
 
 type Props = {
   mid: string;
@@ -26,9 +27,9 @@ const columns = [
   columnHelper.accessor('name', {
     header: 'Tên chương',
     cell: (info) => (
-      <Link href={`/manga/c/${info.row.original.id}`}>
-        <Anchor>{info.getValue()}</Anchor>
-      </Link>
+      <Anchor component={Link} href={Routes.MANGA_CHAPTER + info.row.original.id}>
+        {info.getValue()}
+      </Anchor>
     ),
   }),
   columnHelper.accessor('created', {

@@ -20,18 +20,16 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
   return (
     <Card withBorder radius="md" className={classes.card}>
       <Card.Section>
-        <Link href={href} passHref>
-          <Anchor className={classes.cover}>
-            <Image
-              src={getImageUrl(collectionId, id, cover, '300x0f')}
-              alt={title}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              priority
-            />
-          </Anchor>
-        </Link>
+        <Anchor component={Link} href={href} className={classes.cover}>
+          <Image
+            src={getImageUrl(collectionId, id, cover, '300x0f')}
+            alt={title}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            priority
+          />
+        </Anchor>
       </Card.Section>
 
       {badgeText && (
@@ -45,11 +43,17 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
         </Badge>
       )}
 
-      <Link href={href} passHref>
-        <Text className={classes.title} weight={500} component="a" variant="link" lineClamp={1} title={title}>
-          {title}
-        </Text>
-      </Link>
+      <Text
+        className={classes.title}
+        weight={500}
+        component={Link}
+        href={href}
+        variant="link"
+        lineClamp={1}
+        title={title}
+      >
+        {title}
+      </Text>
 
       <Text size="sm" color="dimmed" lineClamp={4} sx={{ height: 86 }}>
         {description}

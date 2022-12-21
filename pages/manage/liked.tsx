@@ -12,6 +12,7 @@ import { getLikedManga } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR from 'swr';
 import { useSession } from 'utils';
+import { Routes } from 'utils/routes';
 
 type Props = {};
 
@@ -79,9 +80,9 @@ const LikedMangaPage: NextPage<Props> = () => {
           <Stack justify="center" sx={{ height: 300, width: '100%' }}>
             <Text size="xl" color="dimmed" align="center" mb="md" weight={600}>
               Bạn chưa thích truyện nào cả, bạn hãy tìm truyện trong{' '}
-              <Link href="/manga">
-                <Anchor>danh sách </Anchor>
-              </Link>
+              <Anchor component={Link} href={Routes.MANGA}>
+                danh sách{' '}
+              </Anchor>
               nhé
             </Text>
             <Player

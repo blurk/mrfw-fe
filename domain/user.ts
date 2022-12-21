@@ -1,3 +1,5 @@
+import { UniqueId, DateTimeString } from 'global';
+
 export interface Profile extends PockebaseRecord {
   userId: UniqueId;
   avatar: string;

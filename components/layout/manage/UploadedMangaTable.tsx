@@ -17,6 +17,7 @@ import { formatDate, MangaStatusText } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import { DeleteModal } from 'components/molecules/DeleteModal';
 import ModalTitleWithAccent from 'components/atoms/ModalTitleWithAccent';
+import { Routes } from 'utils/routes';
 
 type Props = {
   showDrawer: () => void;
@@ -28,9 +29,9 @@ const columns = [
   columnHelper.accessor('title', {
     header: 'Tên truyện',
     cell: (info) => (
-      <Link href={`/manga/${info.row.original.id}`}>
-        <Anchor>{info.getValue()}</Anchor>
-      </Link>
+      <Anchor component={Link} href={Routes.MANGA + info.row.original.id}>
+        {info.getValue()}
+      </Anchor>
     ),
   }),
   columnHelper.accessor('@expand.author', {

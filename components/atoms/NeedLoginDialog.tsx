@@ -1,6 +1,7 @@
-import { Dialog, Group, Button, Text, Anchor } from "@mantine/core";
-import Link from "next/link";
-import React from "react";
+import { Dialog, Group, Button, Text, Anchor } from '@mantine/core';
+import Link from 'next/link';
+import React from 'react';
+import { Routes } from 'utils/routes';
 
 type Props = {
   opened: boolean;
@@ -9,18 +10,12 @@ type Props = {
 
 const NeedLoginDialog = ({ opened, close }: Props) => {
   return (
-    <Dialog
-      opened={opened}
-      withCloseButton
-      onClose={close}
-      sx={{ width: 370 }}
-      radius="md"
-    >
+    <Dialog opened={opened} withCloseButton onClose={close} sx={{ width: 370 }} radius="md">
       <Text size="sm" weight={500} mb={10}>
-        Hãy{" "}
-        <Link href="/login">
-          <Anchor>đăng nhập</Anchor>
-        </Link>{" "}
+        Hãy{' '}
+        <Anchor component={Link} href={Routes.LOGIN}>
+          đăng nhập
+        </Anchor>
         để thực hiện chức năng này nhé
       </Text>
     </Dialog>
