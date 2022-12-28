@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { useSWRConfig } from 'swr';
-import { Chapter, ChapterRequest } from 'types';
-import { chapterSchema, transformToFormData } from 'utils';
+import { Chapter, ChapterRequest } from 'domains';
+import { chapterSchema, COLLECTION, transformToFormData } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 
 type Props = {
@@ -47,17 +47,20 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
       setIsAdding(true);
       // Update
       if (editData) {
-        await client.records.update('chapter', editData.id, transformToFormData(data));
+        await client.collection(COLLECTION.CHAPTER).update(editData.id, transformToFormData(data));
       } else {
         // Create
-        const res = await client.records.create('chapter', transformToFormData({ ...data, belong_to: mid }));
+        const res = await client
+          .collection(COLLECTION.CHAPTER)
+          .create('chapter', transformToFormData({ ...data, belong_to: mid }));
 
         // Update chapters in manga
-        client.records
-          .getOne('mangas', mid)
+        client
+          .collection(COLLECTION.MANGAS)
+          .getOne(mid)
           .then(async (mangaDetails: Record) => {
             try {
-              await client.records.update('mangas', mid, {
+              await client.collection(COLLECTION.MANGAS).update(mid, {
                 chapters: mangaDetails.chapters.concat(res.id),
               });
             } catch (error) {

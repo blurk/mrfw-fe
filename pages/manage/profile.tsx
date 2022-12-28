@@ -3,13 +3,13 @@ import { useForm } from '@mantine/form';
 import FormChangePassword from 'components/form/FormChangePassword';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import Router from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { useSWRConfig } from 'swr';
-import { getImageUrl, transformToFormData, useSession } from 'utils';
+import { COLLECTION, getImageUrl, transformToFormData, useSession } from 'utils';
 
 type Props = {};
 
@@ -27,9 +27,9 @@ const ProfilePage: NextPage<Props> = ({}) => {
   const { onSubmit, getInputProps, isDirty } = useForm();
 
   const handleSubmit = async (data: { name?: string; avatar?: File | null }) => {
-    if (user?.profile) {
+    if (user) {
       try {
-        await client.records.update('profiles', user.profile.id, transformToFormData({ ...data }));
+        await client.collection('users').update(user.id, transformToFormData({ ...data }));
         // manually revalidate
         mutate('api_user');
         toast.success('Cập nhật thành công');
@@ -47,7 +47,7 @@ const ProfilePage: NextPage<Props> = ({}) => {
     );
   }
 
-  if (!user || !user.profile) {
+  if (!user) {
     return null;
   }
 
@@ -66,7 +66,7 @@ const ProfilePage: NextPage<Props> = ({}) => {
               <TextInput
                 label="Tên người dùng"
                 placeholder="người dùng"
-                defaultValue={user.profile.name}
+                defaultValue={user.name}
                 {...getInputProps('name')}
                 required
               />
@@ -76,7 +76,7 @@ const ProfilePage: NextPage<Props> = ({}) => {
                 label="Avatar"
                 mt="sm"
                 placeholder="Chọn một ảnh bất kỳ"
-                defaultValue={getImageUrl('profiles', user.profile.id, user.profile.avatar)}
+                defaultValue={getImageUrl(COLLECTION.USERS, user.id, user.avatar)}
                 valueComponent={AvatarPreview}
                 {...getInputProps('avatar')}
               />

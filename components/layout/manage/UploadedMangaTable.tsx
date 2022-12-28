@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { uploadedMangaByUser } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR, { mutate, useSWRConfig } from 'swr';
-import { MangaList, MangaRaw } from 'types';
+import { Author, Manga, MangaList } from 'domains';
 
 import { useDisclosure } from '@mantine/hooks';
 import { IconEdit, IconList, IconTrash } from '@tabler/icons';
@@ -13,7 +13,7 @@ import MangaStatusBadge from 'components/atoms/MangaStatusBadge';
 import Link from 'next/link';
 import Router from 'next/router';
 import toast from 'react-hot-toast';
-import { formatDate, MangaStatusText } from 'utils';
+import { COLLECTION, formatDate, MangaStatusText } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import { DeleteModal } from 'components/molecules/DeleteModal';
 import ModalTitleWithAccent from 'components/atoms/ModalTitleWithAccent';
@@ -23,7 +23,7 @@ type Props = {
   showDrawer: () => void;
 };
 
-const columnHelper = createColumnHelper<MangaRaw>();
+const columnHelper = createColumnHelper<Manga>();
 
 const columns = [
   columnHelper.accessor('title', {
@@ -34,12 +34,12 @@ const columns = [
       </Anchor>
     ),
   }),
-  columnHelper.accessor('@expand.author', {
+  columnHelper.accessor('expand.author', {
     header: 'Tác giả',
     cell: (info) =>
       info
         .getValue()
-        .map((author) => author.name)
+        .map((author: Author) => author.name)
         .join(','),
   }),
   columnHelper.accessor('status', {
@@ -81,26 +81,26 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
     mutate('uploaded-manga');
   }, [mutate, pageIndex, pageSize]);
 
-  const { updateEditData } = useFormState() as UseFormStateReturn<MangaRaw>;
+  const { updateEditData } = useFormState() as UseFormStateReturn<Manga>;
 
-  const [currentManga, setCurrentManga] = useState<MangaRaw | null>(null);
+  const [currentManga, setCurrentManga] = useState<Manga | null>(null);
 
   const onEdit = useCallback(
-    (row: MangaRaw) => {
+    (row: Manga) => {
       updateEditData(row);
       showDrawer();
     },
     [showDrawer, updateEditData]
   );
 
-  const onChapterManagement = (row: MangaRaw) => {
+  const onChapterManagement = (row: Manga) => {
     Router.push('/manage/' + row.id);
   };
 
   const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false);
 
   const onDelete = useCallback(
-    (row: MangaRaw) => {
+    (row: Manga) => {
       setCurrentManga(row);
       deleteModalHandlers.open();
     },
@@ -113,7 +113,7 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
       {
         id: 'action',
         header: 'Thao tác',
-        cell: ({ row }: CellContext<MangaRaw, any>) => {
+        cell: ({ row }: CellContext<Manga, any>) => {
           return (
             <Group noWrap>
               <Tooltip label="Chỉnh sửa truyện">
@@ -163,7 +163,7 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
   const onDeleteConfirm = async () => {
     if (currentManga) {
       try {
-        await toast.promise(client.records.delete('mangas', currentManga.id), {
+        await toast.promise(client.collection(COLLECTION.MANGAS).delete(currentManga.id), {
           loading: 'Đang xóa truyện...',
           success: 'Xóa truyện thành công',
           error: 'Xóa truyện thất bại',

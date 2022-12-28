@@ -2,7 +2,7 @@ import { Anchor, Box, Button, Container, Paper, PasswordInput, Text, TextInput, 
 import { useForm, yupResolver } from '@mantine/form';
 import Link from 'next/link';
 import { memo } from 'react';
-import { LoginRequest } from 'types';
+import { LoginRequest } from 'domains';
 import { Routes } from 'utils/routes';
 import { loginSchema } from 'utils/schemas';
 

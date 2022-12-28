@@ -5,7 +5,7 @@ import { IconArrowDown, IconArrowUp } from '@tabler/icons';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
-import { Chapter } from 'types';
+import { Chapter } from 'domains';
 import { formatDate } from 'utils';
 import { Routes } from 'utils/routes';
 

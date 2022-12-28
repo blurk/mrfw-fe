@@ -7,7 +7,7 @@ import ManageChaptersTable from 'components/layout/manage/ChapterTable';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Chapter } from 'types';
+import { Chapter } from 'domains';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 
 type Props = {

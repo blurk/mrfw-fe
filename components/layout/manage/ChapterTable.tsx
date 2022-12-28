@@ -11,8 +11,8 @@ import toast from 'react-hot-toast';
 import { getChaptersOfManga } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR, { useSWRConfig } from 'swr';
-import { Chapter } from 'types';
-import { formatDate } from 'utils';
+import { Chapter } from 'domains';
+import { COLLECTION, formatDate } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import { Routes } from 'utils/routes';
 
@@ -86,7 +86,7 @@ const ManageChaptersTable = ({ mid, showDrawer }: Props) => {
   const onDeleteConfirm = async () => {
     try {
       if (editData?.id) {
-        await toast.promise(client.records.delete('chapter', editData?.id), {
+        await toast.promise(client.collection(COLLECTION.CHAPTER).delete(editData?.id), {
           loading: 'Đang xóa chương...',
           success: 'Xóa chương thành công',
           error: 'Xóa chương thất bại',

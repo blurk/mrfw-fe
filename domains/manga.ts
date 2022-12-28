@@ -1,19 +1,12 @@
-import { Genre, View } from 'types';
+import { ListResult, Record } from 'pocketbase';
 import { Author } from './author';
 import { Chapter } from './chapter';
-import { Profile } from './user';
+import { Comment } from './comment';
+import { Genre } from './genre';
+import { User } from './user';
+import { View } from './views';
 
-export interface MangaExpand {
-  upload_by: Profile;
-  view: View;
-
-  genres: Genre[];
-  author: Author[];
-  chapters: Chapter[];
-  comments: Comment[];
-}
-
-export interface Manga extends PockebaseRecord {
+export interface Manga extends Record {
   title: string;
   description: string;
   upload_by: string;
@@ -26,10 +19,17 @@ export interface Manga extends PockebaseRecord {
   chapters: string[];
   comments: string[];
 
-  '@expand': MangaExpand;
+  expand: {
+    view: View;
+    upload_by: User;
+    author: Author[];
+    genres: Genre[];
+    chapters: Chapter[];
+    comments: Comment[];
+  };
 }
 
-export interface MangaList extends PocketbaseCollection<Manga> {}
+export interface MangaList extends ListResult<Manga> {}
 
 export interface MangaUploadRequest
   extends Pick<Manga, 'title' | 'description' | 'author' | 'status' | 'genres' | 'upload_by'> {

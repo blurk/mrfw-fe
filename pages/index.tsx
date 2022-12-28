@@ -4,7 +4,7 @@ import type { NextPage } from 'next'
 import { NextSeo } from 'next-seo'
 import Link from 'next/link'
 import { HomePageContent } from 'seo'
-import { Manga } from 'types'
+import { Manga } from 'domains'
 import {
 	MangaSectionColor,
 	MangaSectionItemBadge,

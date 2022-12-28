@@ -2734,10 +2734,10 @@ plaiceholder@^2.5.0:
     node-cache "5.1.2"
     node-fetch "2.6.7"
 
-pocketbase@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/pocketbase/-/pocketbase-0.9.0.tgz#8c7b38568c7ac01505dd3cd23e9ead9bfe5559f6"
-  integrity sha512-wLH8JNqtilgVgXMcO9kWcydryxemf8rZgTyn+DTHWtkwOe1ya6MuAOpVHtljIUxxtukZ82LSB2K7h12FZHwGMA==
+pocketbase@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/pocketbase/-/pocketbase-0.9.1.tgz#5a90bc9de7404a8da78621aca1dc9ea550f32ed5"
+  integrity sha512-a9S/WHak+mgr3WI8bD2tz3lFVFzoy6ZgKTBlUXwIH4VLTKVU3JKeAKxqIFBF7av4qblmB+52tX8sWLS08Ftm/w==
 
 postcss@8.4.14:
   version "8.4.14"
@@ -2906,6 +2906,13 @@ react-dropzone@14.2.3:
     attr-accept "^2.2.2"
     file-selector "^0.6.0"
     prop-types "^15.8.1"
+
+react-error-boundary@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
+  integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 react-hot-toast@^2.4.0:
   version "2.4.0"

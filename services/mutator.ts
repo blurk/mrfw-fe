@@ -1,11 +1,11 @@
-import { Record, User } from 'pocketbase';
+import { User } from 'domains';
+import { COLLECTION } from 'utils';
 import client from './initPocketBase';
 
 export const updateBookmark = (mangaId: string, isBookmarked = false, user: User) => {
-  const profile = user.profile as Record;
-  const bookmarks = user.profile!.bookmark as string[];
+  const bookmarks = user.bookmark as string[];
 
-  return client.records.update('profiles', profile.id, {
+  return client.collection(COLLECTION.USERS).update(user.id, {
     bookmark: isBookmarked
       ? bookmarks.filter((bm) => bm !== mangaId) // Remove
       : [...bookmarks, mangaId],
@@ -13,10 +13,9 @@ export const updateBookmark = (mangaId: string, isBookmarked = false, user: User
 };
 
 export const updateLiked = (mangaId: string, isLiked = false, user: User) => {
-  const profile = user.profile as Record;
-  const likedList = user.profile!.liked as string[];
+  const likedList = user.liked as string[];
 
-  return client.records.update('profiles', profile.id, {
+  return client.collection(COLLECTION.USERS).update(user.id, {
     liked: isLiked
       ? likedList.filter((manga) => manga !== mangaId) // Remove
       : [...likedList, mangaId],

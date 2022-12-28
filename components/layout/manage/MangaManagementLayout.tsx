@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBookUpload } from '@tabler/icons';
 import WithSuspense from 'components/atoms/WithSuspense';
 import FormUploadManga from 'components/form/FormUploadManga';
-import { MangaRaw } from 'types';
+import { MangaRaw } from 'domains';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import DiscardModal from './DiscardModal';
 import UploadedMangaTable from './UploadedMangaTable';

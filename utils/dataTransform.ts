@@ -1,12 +1,3 @@
-import { Record as PBRecord } from 'pocketbase';
-
-export const serverDataTransform = (item: PBRecord) => ({
-  ...item,
-  collectionId: item['@collectionId'],
-  collectionName: item['@collectionName'],
-  expand: item['@expand'] ?? undefined,
-});
-
 export const transformToFormData = (data: Record<string, any>) => {
   const formData = new FormData();
 

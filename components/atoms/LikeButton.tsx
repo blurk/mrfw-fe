@@ -3,7 +3,7 @@ import { IconHeart } from '@tabler/icons';
 import toast from 'react-hot-toast';
 import { updateLiked } from 'services/mutator';
 import { useSWRConfig } from 'swr';
-import { useSession } from 'utils';
+import { SWR_USER_KEY, useSession } from 'utils';
 import useNeedLoginDialog from 'utils/hooks/useNeedLoginDialog';
 
 type Props = {
@@ -19,18 +19,18 @@ const LikeButton = ({ mangaId, onlyIcon, classes }: Props) => {
 
   const { show } = useNeedLoginDialog();
 
-  const isLiked = user?.profile?.liked?.includes(mangaId);
+  const isLiked = user?.liked?.includes(mangaId);
 
   const onClick = () => {
-    if (user && user.profile) {
+    if (user) {
       try {
         toast.promise(updateLiked(mangaId, isLiked, user), {
           loading: 'Đang cập nhật danh sách truyện thích...',
           success: () => {
             mutate('api_user');
 
-            if (user.profile) {
-              mutate([user.profile.id]);
+            if (user) {
+              mutate(SWR_USER_KEY.LIKED);
             }
 
             return isLiked ? 'Bỏ thích thành công' : 'Thích thành công';

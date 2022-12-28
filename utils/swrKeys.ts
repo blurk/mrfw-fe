@@ -1,0 +1,4 @@
+export enum SWR_USER_KEY {
+  LIKED = 'USER-LIKED',
+  BOOKMARK = 'USER_BOOKMARK',
+}

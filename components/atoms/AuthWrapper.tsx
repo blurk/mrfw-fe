@@ -6,7 +6,7 @@ import { useSession } from 'utils';
 import AppLoader from './AppLoader';
 
 type Props = {
-  children: ({ user }: { user: null }) => ReactNode | ReactNode[];
+  children: ReactNode | ReactNode[];
 };
 
 const AuthWrapper = ({ children }: Props) => {
@@ -17,11 +17,13 @@ const AuthWrapper = ({ children }: Props) => {
   }
 
   if (!user && !isLoading) {
-    Router.push(Routes.LOGIN);
-    return null;
+    if (typeof window !== 'undefined') {
+      Router.push(Routes.LOGIN);
+      return null;
+    }
   }
 
-  return <>{children({ user })}</>;
+  return <>{children}</>;
 };
 
 export default AuthWrapper;

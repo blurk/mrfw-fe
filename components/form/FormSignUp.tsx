@@ -1,7 +1,7 @@
 import { Anchor, Box, Button, Container, Group, Paper, PasswordInput, Text, TextInput, Title } from '@mantine/core';
 import Link from 'next/link';
 import { useForm, yupResolver } from '@mantine/form';
-import { SignUpRequest } from 'types';
+import { SignUpRequest } from 'domains';
 import { signUpSchema } from 'utils/schemas';
 import { memo } from 'react';
 import { useDisclosure } from '@mantine/hooks';

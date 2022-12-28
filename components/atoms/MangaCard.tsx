@@ -1,9 +1,9 @@
 import { Anchor, Avatar, Badge, Card, Center, createStyles, Group, Space, Text, Tooltip } from '@mantine/core';
 import { IconEye, IconUser } from '@tabler/icons';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import Link from 'next/link';
-import { Manga } from 'types';
-import { getImageUrl } from 'utils';
+import { Manga } from 'domains';
+import { COLLECTION, getImageUrl } from 'utils';
 import BookmarkButton from './BookmarkButton';
 import LikeButton from './LikeButton';
 
@@ -66,7 +66,7 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
             <Group spacing={2}>
               {expand?.upload_by?.avatar ? (
                 <Avatar
-                  src={getImageUrl('profiles', expand.upload_by.id, expand.upload_by.avatar)}
+                  src={getImageUrl(COLLECTION.USERS, expand.upload_by.id, expand.upload_by.avatar)}
                   size={24}
                   radius="xl"
                 />
