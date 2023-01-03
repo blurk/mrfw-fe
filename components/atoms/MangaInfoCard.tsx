@@ -1,5 +1,5 @@
 import { Badge, Box, Button, Card, createStyles, Group, Overlay, Paper, Spoiler, Text } from '@mantine/core';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import Link from 'next/link';
 import { formatDate, MangaStatusText, relativeTimeFromNow } from 'utils';
 import BookmarkButton from './BookmarkButton';
@@ -128,7 +128,7 @@ export function MangaInfoCard({
         <SubInfo title="Tác giả" value={authors} />
         <SubInfo title="Đăng bởi" value={uploadBy} />
         <SubInfo title="Cập nhật mới nhất" value={relativeTimeFromNow(updated)} />
-        <SubInfo title="Đăng ngày" value={formatDate(created)} />
+        <SubInfo title="Đăng vào" value={formatDate(created)} />
 
         <SubInfo title="Lượt xem" value={views.toLocaleString()} />
       </Card.Section>

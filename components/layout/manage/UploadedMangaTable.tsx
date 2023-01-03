@@ -1,23 +1,23 @@
-import { ActionIcon, Anchor, Button, Group, Modal, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Anchor, Group, Text, Tooltip } from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { uploadedMangaByUser } from 'services/fetchers';
 import client from 'services/initPocketBase';
-import useSWR, { mutate, useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { Author, Manga, MangaList } from 'domains';
 
 import { useDisclosure } from '@mantine/hooks';
-import { IconEdit, IconList, IconTrash } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconEdit, IconList, IconTrash } from '@tabler/icons';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import BaseTable from 'components/atoms/BaseTable';
 import MangaStatusBadge from 'components/atoms/MangaStatusBadge';
 import Link from 'next/link';
 import Router from 'next/router';
-import toast from 'react-hot-toast';
 import { COLLECTION, formatDate, MangaStatusText } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import { DeleteModal } from 'components/molecules/DeleteModal';
 import ModalTitleWithAccent from 'components/atoms/ModalTitleWithAccent';
 import { Routes } from 'utils/routes';
+import { showNotification, updateNotification } from '@mantine/notifications';
 
 type Props = {
   showDrawer: () => void;
@@ -94,7 +94,7 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
   );
 
   const onChapterManagement = (row: Manga) => {
-    Router.push('/manage/' + row.id);
+    Router.push(Routes.MANAGE + row.id);
   };
 
   const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false);
@@ -163,14 +163,32 @@ const UploadedMangaTable = ({ showDrawer }: Props) => {
   const onDeleteConfirm = async () => {
     if (currentManga) {
       try {
-        await toast.promise(client.collection(COLLECTION.MANGAS).delete(currentManga.id), {
-          loading: 'Đang xóa truyện...',
-          success: 'Xóa truyện thành công',
-          error: 'Xóa truyện thất bại',
+        showNotification({
+          id: 'delete-manga',
+          loading: true,
+          title: 'Đang xóa truyện...',
+          message: 'Truyện của bạn đang được xóa, hãy chờ chút nhé',
+          autoClose: false,
+          disallowClose: true,
         });
+        await client.collection(COLLECTION.MANGAS).delete(currentManga.id);
         mutate('uploaded-manga');
+        updateNotification({
+          id: 'delete-manga',
+          title: 'Thao tác thành công',
+          message: 'Truyện của bạn đã được xóa thành công',
+          color: 'teal',
+          icon: <IconCheck size={16} />,
+        });
       } catch (error) {
         console.log(error);
+        updateNotification({
+          id: 'delete-manga',
+          title: 'Thao tác thất bại',
+          message: 'Truyện của bạn đã không được xóa. Hãy thử lại nhé',
+          color: 'red',
+          icon: <IconAlertCircle size={16} />,
+        });
       }
     }
 

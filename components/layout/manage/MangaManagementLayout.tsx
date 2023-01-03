@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBookUpload } from '@tabler/icons';
 import WithSuspense from 'components/atoms/WithSuspense';
 import FormUploadManga from 'components/form/FormUploadManga';
-import { MangaRaw } from 'domains';
+import { Manga } from 'domains';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import DiscardModal from './DiscardModal';
 import UploadedMangaTable from './UploadedMangaTable';
@@ -11,7 +11,7 @@ import UploadedMangaTable from './UploadedMangaTable';
 type Props = {};
 
 const MangaManagementLayout = ({}: Props) => {
-  const { isDirty, editData, reset } = useFormState() as UseFormStateReturn<MangaRaw>;
+  const { isDirty, editData, reset } = useFormState() as UseFormStateReturn<Manga>;
 
   const [isDrawerOpen, drawerHandlers] = useDisclosure(false);
   const [isModalOpen, modalHandlers] = useDisclosure(false);

@@ -1,13 +1,12 @@
 import { ActionIcon, Anchor, Group, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconEdit, IconTrash } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconEdit, IconTrash } from '@tabler/icons';
 import { CellContext, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import BaseTable from 'components/atoms/BaseTable';
 import ModalTitleWithAccent from 'components/atoms/ModalTitleWithAccent';
 import { DeleteModal } from 'components/molecules/DeleteModal';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 import { getChaptersOfManga } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR, { useSWRConfig } from 'swr';
@@ -15,6 +14,7 @@ import { Chapter } from 'domains';
 import { COLLECTION, formatDate } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import { Routes } from 'utils/routes';
+import { showNotification, updateNotification } from '@mantine/notifications';
 
 type Props = {
   mid: string;
@@ -51,8 +51,7 @@ const ManageChaptersTable = ({ mid, showDrawer }: Props) => {
     pageSize: 10,
   });
 
-  const { data } = useSWR('chapters-table', () => getChaptersOfManga(mid, pageIndex + 1, pageSize), {
-    isPaused: () => client.authStore.model == null,
+  const { data } = useSWR(mid ? 'chapters-table' : undefined, () => getChaptersOfManga(mid, pageIndex + 1, pageSize), {
     suspense: true,
   });
 
@@ -86,10 +85,21 @@ const ManageChaptersTable = ({ mid, showDrawer }: Props) => {
   const onDeleteConfirm = async () => {
     try {
       if (editData?.id) {
-        await toast.promise(client.collection(COLLECTION.CHAPTER).delete(editData?.id), {
-          loading: 'Đang xóa chương...',
-          success: 'Xóa chương thành công',
-          error: 'Xóa chương thất bại',
+        showNotification({
+          id: 'delete-chapter',
+          loading: true,
+          title: 'Đang xóa chương...',
+          message: 'Chương của bạn đang được xóa, hãy chờ chút nhé',
+          autoClose: false,
+          disallowClose: true,
+        });
+        await client.collection(COLLECTION.CHAPTER).delete(editData?.id);
+        updateNotification({
+          id: 'delete-chapter',
+          title: 'Thao tác thành công',
+          message: 'Chương truyện của bạn đã được xóa thành công',
+          color: 'teal',
+          icon: <IconCheck size={16} />,
         });
 
         updateEditData(null);
@@ -98,6 +108,13 @@ const ManageChaptersTable = ({ mid, showDrawer }: Props) => {
       mutate('chapters-table');
     } catch (error) {
       console.log(error);
+      updateNotification({
+        id: 'delete-chapter',
+        title: 'Thao tác thất bại',
+        message: 'Chương truyện của bạn đã không được xóa. Hãy thử lại nhé',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     }
 
     deleteModalHandlers.close();

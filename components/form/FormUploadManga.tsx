@@ -9,6 +9,8 @@ import useSWR, { useSWRConfig } from 'swr';
 import { Manga, MangaUploadRequest, SWRMangaUploadFormStatus, User } from 'domains';
 import { COLLECTION, MANGA_STATUS, transformToFormData, uploadMangaSchema } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
 
 type Props = {
   hideDrawer: () => void;
@@ -28,18 +30,18 @@ const getInitialValues = (data?: SWRMangaUploadFormStatus['editData']) =>
 const FormUploadManga = ({ hideDrawer }: Props) => {
   const { mutate } = useSWRConfig();
 
-  const { editData, isDirty: isFormDirty, changeDirtyStatus } = useFormState() as UseFormStateReturn<Manga>;
+  const { editData, changeDirtyStatus } = useFormState() as UseFormStateReturn<Manga>;
 
   const { onSubmit, getInputProps, isDirty, reset } = useForm<MangaUploadRequest>({
     validate: yupResolver(uploadMangaSchema),
     initialValues: getInitialValues(editData),
   });
 
+  const _isFormDirty = isDirty();
+
   useEffect(() => {
-    if (!isFormDirty) {
-      changeDirtyStatus(isDirty());
-    }
-  }, [isDirty, changeDirtyStatus, isFormDirty]);
+    changeDirtyStatus(_isFormDirty);
+  }, [changeDirtyStatus, _isFormDirty]);
 
   const [isAdding, setIsAdding] = useState(false);
   const handleSubmit = async (data: MangaUploadRequest) => {
@@ -61,12 +63,22 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
           view: view.id,
         });
       }
-      toast.success(editData ? 'Lưu chỉnh sửa thành công' : 'Thêm mới thành công');
+      showNotification({
+        title: 'Thao tác thành công',
+        message: editData ? 'Truyện đã được cập nhật' : 'Truyện đã được thêm mới',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+      });
       mutate('uploaded-manga');
       reset();
       hideDrawer();
     } catch (error) {
-      toast.error(editData ? 'Lưu chỉnh sửa thất bại' : 'Thêm mới thất bại');
+      showNotification({
+        title: 'Thao tác thất bại',
+        message: editData ? 'Truyện chưa được cập nhật. Hãy thử lại nhé' : 'Truyện chưa được thêm mới. Hãy thử lại nhé',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     } finally {
       setIsAdding(false);
     }

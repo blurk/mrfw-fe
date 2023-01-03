@@ -1,5 +1,7 @@
 import { Box, Button, FileInput, Grid, Loader, Paper, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import AuthWrapper from 'components/atoms/AuthWrapper';
+import ClientOnly from 'components/atoms/ClientOnly';
 import FormChangePassword from 'components/form/FormChangePassword';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -14,15 +16,9 @@ import { COLLECTION, getImageUrl, transformToFormData, useSession } from 'utils'
 type Props = {};
 
 const ProfilePage: NextPage<Props> = ({}) => {
-  const { user, isLoading } = useSession();
+  const { user } = useSession();
 
   const { mutate } = useSWRConfig();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      Router.push('/login');
-    }
-  }, [user, isLoading]);
 
   const { onSubmit, getInputProps, isDirty } = useForm();
 
@@ -39,61 +35,51 @@ const ProfilePage: NextPage<Props> = ({}) => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
-        <Loader />
-      </Box>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
   return (
-    <>
-      <Head>
-        <title>Quản lý thông tin tài khoản</title>
-      </Head>
+    <ClientOnly>
+      <AuthWrapper>
+        <Head>
+          <title>Quản lý thông tin tài khoản</title>
+        </Head>
 
-      <Title>Thông tin cá nhân</Title>
+        <Title>Thông tin cá nhân</Title>
 
-      <Grid>
-        <Grid.Col span={6}>
-          <Paper p="md" mt="md">
-            <form onSubmit={onSubmit(handleSubmit)}>
-              <TextInput
-                label="Tên người dùng"
-                placeholder="người dùng"
-                defaultValue={user.name}
-                {...getInputProps('name')}
-                required
-              />
+        <Grid>
+          <Grid.Col span={6}>
+            <Paper p="md" mt="md">
+              <form onSubmit={onSubmit(handleSubmit)}>
+                <TextInput
+                  label="Tên người dùng"
+                  placeholder="người dùng"
+                  defaultValue={user?.name}
+                  {...getInputProps('name')}
+                  required
+                />
 
-              <FileInput
-                required
-                label="Avatar"
-                mt="sm"
-                placeholder="Chọn một ảnh bất kỳ"
-                defaultValue={getImageUrl(COLLECTION.USERS, user.id, user.avatar)}
-                valueComponent={AvatarPreview}
-                {...getInputProps('avatar')}
-              />
+                <FileInput
+                  required
+                  label="Avatar"
+                  mt="sm"
+                  placeholder="Chọn một ảnh bất kỳ"
+                  defaultValue={getImageUrl(COLLECTION.USERS, user?.id, user?.avatar)}
+                  valueComponent={AvatarPreview}
+                  {...getInputProps('avatar')}
+                />
 
-              <TextInput mt="sm" label="Email đăng ký" defaultValue={user.email} disabled />
-              <Button fullWidth mt="xl" type="submit" disabled={!isDirty()}>
-                Cập nhật thông tin
-              </Button>
-            </form>
-          </Paper>
-        </Grid.Col>
+                <TextInput mt="sm" label="Email đăng ký" defaultValue={user?.email} disabled />
+                <Button fullWidth mt="xl" type="submit" disabled={!isDirty()}>
+                  Cập nhật thông tin
+                </Button>
+              </form>
+            </Paper>
+          </Grid.Col>
 
-        <Grid.Col span={6}>
-          <FormChangePassword />
-        </Grid.Col>
-      </Grid>
-    </>
+          <Grid.Col span={6}>
+            <FormChangePassword />
+          </Grid.Col>
+        </Grid>
+      </AuthWrapper>
+    </ClientOnly>
   );
 };
 

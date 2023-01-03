@@ -1,6 +1,7 @@
-import { Avatar, Button, Menu, Text, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Indicator, Menu, Text, useMantineTheme } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import {
+  IconBell,
   IconBook,
   IconBookmark,
   IconHeart,
@@ -14,6 +15,7 @@ import Link from 'next/link';
 import Router from 'next/router';
 import client, { logout } from 'services/initPocketBase';
 import { useSession } from 'utils';
+import { useOnNewChapterAdded } from 'utils/hooks/useOnNewChapterAdded';
 
 type Props = {};
 
@@ -29,6 +31,8 @@ const MenuProfile = ({}: Props) => {
     setUser(null);
     Router.push('/login');
   };
+
+  useOnNewChapterAdded();
 
   if (!user) {
     return (

@@ -25,8 +25,8 @@ const ChapterViewer = ({ data }: Props) => {
     });
 
     return sorted.map((chap) => (
-      <Link href={`/manga/c/${chap.id}`} key={chap.id}>
-        <Group grow pr="lg" sx={{ height: '100%' }}>
+      <Link href={`/manga/c/${chap.id}`} key={chap.id} style={{ textDecoration: 'none' }}>
+        <Group grow pr="lg" sx={{ height: '100%' }} px={'sm'}>
           <Text color="blue">{chap.name}</Text>
           <Text>{formatDate(chap.created)}</Text>
         </Group>

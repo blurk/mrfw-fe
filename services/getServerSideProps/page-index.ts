@@ -28,8 +28,8 @@ export async function getServerSidePropsPageIndex({}: GetServerSidePropsContext)
     .slice(0, 10);
 
   const props = {
-    recentlyUpdatedMangas: recentlyUpdatedMangas,
-    newMangas: newMangas,
+    recentlyUpdatedMangas: parseServerData(recentlyUpdatedMangas),
+    newMangas: parseServerData(newMangas),
     hotMangas: parseServerData(hotMangas),
   };
 

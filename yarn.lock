@@ -2398,6 +2398,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+mantine-datatable@^1.7.32:
+  version "1.7.32"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-1.7.32.tgz#d863fa05bb4ca824041f5ae7206f98328887b991"
+  integrity sha512-3Lmr905/pxDrj/niV2Glev9t6t3TqjZdRIERpJCDFNx/WW2Ue3gmwC/tMseuxtuTGFZTTxdPA6/DAQssqjcJcw==
+
 "memoize-one@>=3.1.1 <6":
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
@@ -2906,13 +2911,6 @@ react-dropzone@14.2.3:
     attr-accept "^2.2.2"
     file-selector "^0.6.0"
     prop-types "^15.8.1"
-
-react-error-boundary@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
-  integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
 
 react-hot-toast@^2.4.0:
   version "2.4.0"

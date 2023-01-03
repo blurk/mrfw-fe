@@ -1,6 +1,7 @@
 import { Author, Chapter, ChapterList, Genre, Manga } from 'domains';
+import { Notification } from 'domains/notifications';
 import { ListResult } from 'pocketbase';
-import { COLLECTION } from 'utils';
+import { COLLECTION, parseServerData } from 'utils';
 import client from './initPocketBase';
 
 export const uploadedMangaByUser = (page = 1, pageSize = 10): Promise<ListResult<Manga>> =>
@@ -43,7 +44,7 @@ export const getChaptersOfManga = async (mangaId: string, page = 1, perPage = 10
         sort: '-created',
       });
 
-      return JSON.parse(JSON.stringify(chapters)) as ChapterList;
+      return parseServerData(chapters) as ChapterList;
     } catch (error) {
       console.log(error);
     }
@@ -104,13 +105,29 @@ export const getLikedManga = async (profileId: string) => {
 
 export const getAllChapters = async () => {
   try {
-    const res = await client.collection('chapter').getFullList();
-    const json = JSON.parse(JSON.stringify(res)) as Chapter[];
+    const res = await client.collection(COLLECTION.CHAPTER).getFullList();
+    const json = parseServerData(res) as Chapter[];
 
     return json.map((chapter) => chapter.id) as string[];
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to fetch posts, received message ${error.message}`);
+      throw new Error(`Failed to fetch, received message ${error.message}`);
+    }
+  }
+};
+
+export const getCurrentUserNotifications = async (userId: string) => {
+  try {
+    const res = await client.collection(COLLECTION.NOTIFICATIONS).getFullList(undefined, {
+      filter: `of_user="${userId}"`,
+      expand: 'of_chapter',
+    });
+    const json = parseServerData(res) as Notification[];
+
+    return json;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch, received message ${error.message}`);
     }
   }
 };

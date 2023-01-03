@@ -7,6 +7,7 @@ enum COLLECTION {
   COMMENTS = 'comments',
   RATING = 'rating',
   VIEWS = 'views',
+  NOTIFICATIONS = 'notifications',
 }
 
 export { COLLECTION };
