@@ -1,11 +1,5 @@
-import { createStyles, Text, Container, ActionIcon, Group } from '@mantine/core';
-import {
-  IconBrandTwitter,
-  IconBrandYoutube,
-  IconBrandInstagram,
-  IconBrandGithub,
-  IconBrandFacebook,
-} from '@tabler/icons';
+import { ActionIcon, Container, createStyles, Group, Text } from '@mantine/core';
+import { IconBrandFacebook, IconBrandGithub, IconBrandTwitter } from '@tabler/icons';
 import Logo from 'components/atoms/Logo';
 import Link from 'next/link';
 

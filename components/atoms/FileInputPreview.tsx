@@ -1,5 +1,5 @@
 import { FileInputProps, Box, SimpleGrid, ScrollArea } from '@mantine/core'
-import Image from 'next/image'
+import Image from "next/legacy/image";
 import { memo } from 'react'
 
 export function FilePreview({ file }: { file: File | string }) {

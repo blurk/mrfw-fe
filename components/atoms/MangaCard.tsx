@@ -2,12 +2,12 @@ import { Anchor, Avatar, Badge, Card, Center, createStyles, Group, Space, Text, 
 import { IconEye, IconUser } from '@tabler/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Manga } from 'types';
-import { getImageUrl } from 'utils';
+import { Manga } from 'domains';
+import { COLLECTION, getImageUrl } from 'utils';
 import BookmarkButton from './BookmarkButton';
 import LikeButton from './LikeButton';
 
-interface Props extends Manga {
+interface Props extends Pick<Manga, 'cover' | 'id' | 'title' | 'description' | 'collectionId' | 'expand'> {
   badgeText?: string;
   accentColor?: string;
 }
@@ -20,18 +20,9 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
   return (
     <Card withBorder radius="md" className={classes.card}>
       <Card.Section>
-        <Link href={href} passHref>
-          <Anchor className={classes.cover}>
-            <Image
-              src={getImageUrl(collectionId, id, cover, '300x0f')}
-              alt={title}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              priority
-            />
-          </Anchor>
-        </Link>
+        <Anchor component={Link} href={href} className={classes.cover}>
+          <Image src={getImageUrl(collectionId, id, cover, '300x300')} alt={title} width={300} height={300} priority />
+        </Anchor>
       </Card.Section>
 
       {badgeText && (
@@ -45,11 +36,17 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
         </Badge>
       )}
 
-      <Link href={href} passHref>
-        <Text className={classes.title} weight={500} component="a" variant="link" lineClamp={1} title={title}>
-          {title}
-        </Text>
-      </Link>
+      <Text
+        className={classes.title}
+        weight={500}
+        component={Link}
+        href={href}
+        variant="link"
+        lineClamp={1}
+        title={title}
+      >
+        {title}
+      </Text>
 
       <Text size="sm" color="dimmed" lineClamp={4} sx={{ height: 86 }}>
         {description}
@@ -62,7 +59,7 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
             <Group spacing={2}>
               {expand?.upload_by?.avatar ? (
                 <Avatar
-                  src={getImageUrl('profiles', expand.upload_by.id, expand.upload_by.avatar)}
+                  src={getImageUrl(COLLECTION.USERS, expand.upload_by.id, expand.upload_by.avatar)}
                   size={24}
                   radius="xl"
                 />
@@ -117,6 +114,7 @@ const useStyles = createStyles((theme) => ({
     width: '100%',
     aspectRatio: '1',
     display: 'block',
+    overflow: 'hidden',
   },
 
   badge: {

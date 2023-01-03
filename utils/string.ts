@@ -1,4 +1,4 @@
-import { Author, Genre } from 'types';
+import { Author, Genre } from 'domains';
 
 export const getImageUrl = (collectionId: string, recordId: string, url: string, thumb?: string) =>
   `${process.env.NEXT_PUBLIC_FILES_URL}/${collectionId}/${recordId}/${url}${thumb ? '?thumb=' + thumb : ''}`;

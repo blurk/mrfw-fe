@@ -3,7 +3,7 @@ import { IconBookmark } from '@tabler/icons';
 import toast from 'react-hot-toast';
 import { updateBookmark } from 'services/mutator';
 import { useSWRConfig } from 'swr';
-import { useSession } from 'utils';
+import { SWR_USER_KEY, useSession } from 'utils';
 import useNeedLoginDialog from 'utils/hooks/useNeedLoginDialog';
 
 type Props = {
@@ -19,18 +19,18 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
 
   const { show } = useNeedLoginDialog();
 
-  const isBookmarked = user?.profile?.bookmark?.includes(mangaId);
+  const isBookmarked = user?.bookmark?.includes(mangaId);
 
   const onClick = () => {
-    if (user && user.profile) {
+    if (user) {
       try {
         toast.promise(updateBookmark(mangaId, isBookmarked, user), {
           loading: 'Đang cập nhật danh sách theo dõi...',
           success: () => {
             mutate('api_user');
 
-            if (user.profile) {
-              mutate([user.profile.id]);
+            if (user) {
+              mutate(SWR_USER_KEY.BOOKMARK);
             }
 
             return isBookmarked ? 'Bỏ theo dõi thành công' : 'Đã theo dõi';

@@ -1,35 +1,31 @@
 import { Box, Button, FileInput, Grid, Loader, Paper, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import AuthWrapper from 'components/atoms/AuthWrapper';
+import ClientOnly from 'components/atoms/ClientOnly';
 import FormChangePassword from 'components/form/FormChangePassword';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import Router from 'next/router';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { useSWRConfig } from 'swr';
-import { getImageUrl, transformToFormData, useSession } from 'utils';
+import { COLLECTION, getImageUrl, transformToFormData, useSession } from 'utils';
 
 type Props = {};
 
 const ProfilePage: NextPage<Props> = ({}) => {
-  const { user, isLoading } = useSession();
+  const { user } = useSession();
 
   const { mutate } = useSWRConfig();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      Router.push('/login');
-    }
-  }, [user, isLoading]);
 
   const { onSubmit, getInputProps, isDirty } = useForm();
 
   const handleSubmit = async (data: { name?: string; avatar?: File | null }) => {
-    if (user?.profile) {
+    if (user) {
       try {
-        await client.records.update('profiles', user.profile.id, transformToFormData({ ...data }));
+        await client.collection('users').update(user.id, transformToFormData({ ...data }));
         // manually revalidate
         mutate('api_user');
         toast.success('Cập nhật thành công');
@@ -39,61 +35,51 @@ const ProfilePage: NextPage<Props> = ({}) => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
-        <Loader />
-      </Box>
-    );
-  }
-
-  if (!user || !user.profile) {
-    return null;
-  }
-
   return (
-    <>
-      <Head>
-        <title>Quản lý thông tin tài khoản</title>
-      </Head>
+    <ClientOnly>
+      <AuthWrapper>
+        <Head>
+          <title>Quản lý thông tin tài khoản</title>
+        </Head>
 
-      <Title>Thông tin cá nhân</Title>
+        <Title>Thông tin cá nhân</Title>
 
-      <Grid>
-        <Grid.Col span={6}>
-          <Paper p="md" mt="md">
-            <form onSubmit={onSubmit(handleSubmit)}>
-              <TextInput
-                label="Tên người dùng"
-                placeholder="người dùng"
-                defaultValue={user.profile.name}
-                {...getInputProps('name')}
-                required
-              />
+        <Grid>
+          <Grid.Col span={6}>
+            <Paper p="md" mt="md">
+              <form onSubmit={onSubmit(handleSubmit)}>
+                <TextInput
+                  label="Tên người dùng"
+                  placeholder="người dùng"
+                  defaultValue={user?.name}
+                  {...getInputProps('name')}
+                  required
+                />
 
-              <FileInput
-                required
-                label="Avatar"
-                mt="sm"
-                placeholder="Chọn một ảnh bất kỳ"
-                defaultValue={getImageUrl('profiles', user.profile.id, user.profile.avatar)}
-                valueComponent={AvatarPreview}
-                {...getInputProps('avatar')}
-              />
+                <FileInput
+                  required
+                  label="Avatar"
+                  mt="sm"
+                  placeholder="Chọn một ảnh bất kỳ"
+                  defaultValue={getImageUrl(COLLECTION.USERS, user?.id, user?.avatar)}
+                  valueComponent={AvatarPreview}
+                  {...getInputProps('avatar')}
+                />
 
-              <TextInput mt="sm" label="Email đăng ký" defaultValue={user.email} disabled />
-              <Button fullWidth mt="xl" type="submit" disabled={!isDirty()}>
-                Cập nhật thông tin
-              </Button>
-            </form>
-          </Paper>
-        </Grid.Col>
+                <TextInput mt="sm" label="Email đăng ký" defaultValue={user?.email} disabled />
+                <Button fullWidth mt="xl" type="submit" disabled={!isDirty()}>
+                  Cập nhật thông tin
+                </Button>
+              </form>
+            </Paper>
+          </Grid.Col>
 
-        <Grid.Col span={6}>
-          <FormChangePassword />
-        </Grid.Col>
-      </Grid>
-    </>
+          <Grid.Col span={6}>
+            <FormChangePassword />
+          </Grid.Col>
+        </Grid>
+      </AuthWrapper>
+    </ClientOnly>
   );
 };
 

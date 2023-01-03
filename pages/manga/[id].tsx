@@ -3,8 +3,8 @@ import { MangaInfoCard } from 'components/atoms/MangaInfoCard';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import client from 'services/initPocketBase';
-import { Manga } from 'types';
-import { getAuthorsName, getGenresName, getImageUrl, serverDataTransform } from 'utils';
+import { Manga } from 'domains';
+import { COLLECTION, getAuthorsName, getGenresName, getImageUrl } from 'utils';
 
 type Props = {
   mangaDetails: Manga;
@@ -56,11 +56,11 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
 export default PageMangaSingle;
 
 export const getServerSideProps = async ({ query }: GetServerSidePropsContext) => {
-  const res = await client.records.getOne('mangas', query.id as string, {
+  const res = await client.collection(COLLECTION.MANGAS).getOne(query.id as string, {
     expand: 'upload_by,genres,author,chapters,comments,view',
   });
 
-  const mangaDetails = serverDataTransform(JSON.parse(JSON.stringify(res)));
+  const mangaDetails = JSON.parse(JSON.stringify(res)) as Manga;
 
   return {
     props: {

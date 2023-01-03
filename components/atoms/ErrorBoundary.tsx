@@ -32,7 +32,9 @@ class ErrorBoundary extends Component<Props, State> {
             <Title order={2} color="red" align="center" mb="md">
               Bị lỗi mất rồi
             </Title>
-            <Text component="p">Bạn hãy thử F5 để tải lại trang hoặc vào lại sau 1 lúc nhé.</Text>
+            <Text component="p" align="center">
+              Bạn hãy thử F5 để tải lại trang hoặc vào lại sau 1 lúc nhé.
+            </Text>
             <Player
               autoplay
               loop

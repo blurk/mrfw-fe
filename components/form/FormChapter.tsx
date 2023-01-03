@@ -3,12 +3,13 @@ import { useForm, yupResolver } from '@mantine/form';
 import FileInputPreview from 'components/atoms/FileInputPreview';
 import { Record } from 'pocketbase';
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { useSWRConfig } from 'swr';
-import { Chapter, ChapterRequest } from 'types';
-import { chapterSchema, transformToFormData } from 'utils';
+import { Chapter, ChapterRequest } from 'domains';
+import { chapterSchema, COLLECTION, transformToFormData } from 'utils';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
 
 type Props = {
   hideDrawer: () => void;
@@ -28,18 +29,18 @@ const getInitialValues = (data?: Chapter | null) =>
 const FormChapter = ({ hideDrawer, mid }: Props) => {
   const { mutate } = useSWRConfig();
 
-  const { editData, isDirty: isFormDirty, changeDirtyStatus } = useFormState() as UseFormStateReturn<Chapter>;
+  const { editData, changeDirtyStatus } = useFormState() as UseFormStateReturn<Chapter>;
 
   const { onSubmit, getInputProps, isDirty, reset } = useForm<ChapterRequest>({
     validate: yupResolver(chapterSchema),
     initialValues: getInitialValues(editData),
   });
 
+  const _isFormDirty = isDirty();
+
   useEffect(() => {
-    if (!isFormDirty) {
-      changeDirtyStatus(isDirty());
-    }
-  }, [changeDirtyStatus, isDirty, isFormDirty]);
+    changeDirtyStatus(_isFormDirty);
+  }, [changeDirtyStatus, _isFormDirty]);
 
   const [isAdding, setIsAdding] = useState(false);
   const handleSubmit = async (data: ChapterRequest) => {
@@ -47,17 +48,20 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
       setIsAdding(true);
       // Update
       if (editData) {
-        await client.records.update('chapter', editData.id, transformToFormData(data));
+        await client.collection(COLLECTION.CHAPTER).update(editData.id, transformToFormData(data));
       } else {
         // Create
-        const res = await client.records.create('chapter', transformToFormData({ ...data, belong_to: mid }));
+        const res = await client
+          .collection(COLLECTION.CHAPTER)
+          .create(transformToFormData({ ...data, belong_to: mid }));
 
         // Update chapters in manga
-        client.records
-          .getOne('mangas', mid)
+        client
+          .collection(COLLECTION.MANGAS)
+          .getOne(mid)
           .then(async (mangaDetails: Record) => {
             try {
-              await client.records.update('mangas', mid, {
+              await client.collection(COLLECTION.MANGAS).update(mid, {
                 chapters: mangaDetails.chapters.concat(res.id),
               });
             } catch (error) {
@@ -66,12 +70,22 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
           })
           .catch(console.error);
       }
-      toast.success(editData ? 'Lưu chỉnh sửa thành công' : 'Thêm mới thành công');
+      showNotification({
+        title: 'Thao tác thành công',
+        message: editData ? 'Chương đã được cập nhật' : 'Chương đã được thêm mới',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+      });
       mutate('chapters-table');
       reset();
       hideDrawer();
     } catch (error) {
-      toast.error(editData ? 'Lưu chỉnh sửa thất bại' : 'Thêm mới thất bại');
+      showNotification({
+        title: 'Thao tác thất bại',
+        message: editData ? 'Chương chưa được cập nhật. Hãy thử lại nhé' : 'Chương chưa được thêm mới. Hãy thử lại nhé',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     } finally {
       setIsAdding(false);
     }

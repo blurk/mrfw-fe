@@ -4,15 +4,16 @@ import ScrollToTop from 'components/atoms/ScrollToTop';
 import ChapterSelection from 'components/molecules/ChapterSelection';
 import { GetStaticProps, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
-import Image from 'next/future/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import { getPlaiceholder, IGetPlaiceholderReturn } from 'plaiceholder';
 import { ParsedUrlQuery } from 'querystring';
 import { Fragment, useEffect } from 'react';
 import { getAllChapters } from 'services/fetchers';
 import client from 'services/initPocketBase';
-import { Chapter, View } from 'types';
-import { getImageUrl, serverDataTransform } from 'utils';
+import { Chapter, View } from 'domains';
+import { COLLECTION, getImageUrl, parseServerData } from 'utils';
+import { Routes } from 'utils/routes';
 
 type Props = {
   chapterDetails: Chapter;
@@ -28,7 +29,7 @@ const Chapter: NextPage<Props> = ({ chapterDetails, chapterSelection, prevChapte
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       try {
-        await client.records.update('views', view.id, {
+        await client.collection(COLLECTION.VIEWS).update(view.id, {
           count: view.count + 1,
         });
       } catch (error) {}
@@ -157,17 +158,17 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) => {
-  const res = await client.records.getOne('chapter', params!.id as string, {
+  const res = await client.collection(COLLECTION.CHAPTER).getOne(params!.id as string, {
     expand: 'belong_to',
   });
 
-  const mangaRes = await client.records.getOne('mangas', res.belong_to, {
+  const mangaRes = await client.collection(COLLECTION.MANGAS).getOne(res.belong_to, {
     expand: 'chapters',
   });
 
-  const viewRes = await client.records.getOne('views', mangaRes.view);
+  const viewRes = await client.collection(COLLECTION.VIEWS).getOne(mangaRes.view);
 
-  const chapterList = mangaRes['@expand'].chapters as Chapter[];
+  const chapterList = mangaRes.expand.chapters as Chapter[];
 
   // Sort from old to new
   chapterList.sort((chapterA, chapterB) => {
@@ -187,9 +188,9 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) 
   const prevChapter = chapterList[currentChapterIndex - 1];
   const nextChapter = chapterList[currentChapterIndex + 1];
 
-  const chapterDetails = serverDataTransform(JSON.parse(JSON.stringify(res))) as unknown as Chapter;
+  const chapterDetails = JSON.parse(JSON.stringify(res)) as unknown as Chapter;
 
-  const imagePaths = chapterDetails.images.map((src) => getImageUrl('chapter', chapterDetails.id, src));
+  const imagePaths = chapterDetails.images.map((src) => getImageUrl(COLLECTION.CHAPTER, chapterDetails.id, src));
 
   const chunks: string[][] = [];
   for (let i = 0; i < imagePaths.length; i += 10) {
@@ -225,9 +226,9 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) 
     props: {
       chapterDetails,
       chapterSelection,
-      prevChapter: prevChapter ? `/manga/c/${prevChapter.id}` : null,
-      nextChapter: nextChapter ? `/manga/c/${nextChapter.id}` : null,
-      view: JSON.parse(JSON.stringify(viewRes)) as View,
+      prevChapter: prevChapter ? `${Routes.MANGA_CHAPTER}${prevChapter.id}` : null,
+      nextChapter: nextChapter ? `${Routes.MANGA_CHAPTER}${nextChapter.id}` : null,
+      view: parseServerData(viewRes) as View,
       images,
     },
     revalidate: 60 * 60 * 24 * 7, // One week
