@@ -12,7 +12,8 @@ import { Fragment, useEffect } from 'react';
 import { getAllChapters } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import { Chapter, View } from 'domains';
-import { COLLECTION, getImageUrl } from 'utils';
+import { COLLECTION, getImageUrl, parseServerData } from 'utils';
+import { Routes } from 'utils/routes';
 
 type Props = {
   chapterDetails: Chapter;
@@ -189,7 +190,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) 
 
   const chapterDetails = JSON.parse(JSON.stringify(res)) as unknown as Chapter;
 
-  const imagePaths = chapterDetails.images.map((src) => getImageUrl('chapter', chapterDetails.id, src));
+  const imagePaths = chapterDetails.images.map((src) => getImageUrl(COLLECTION.CHAPTER, chapterDetails.id, src));
 
   const chunks: string[][] = [];
   for (let i = 0; i < imagePaths.length; i += 10) {
@@ -225,9 +226,9 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) 
     props: {
       chapterDetails,
       chapterSelection,
-      prevChapter: prevChapter ? `/manga/c/${prevChapter.id}` : null,
-      nextChapter: nextChapter ? `/manga/c/${nextChapter.id}` : null,
-      view: JSON.parse(JSON.stringify(viewRes)) as View,
+      prevChapter: prevChapter ? `${Routes.MANGA_CHAPTER}${prevChapter.id}` : null,
+      nextChapter: nextChapter ? `${Routes.MANGA_CHAPTER}${nextChapter.id}` : null,
+      view: parseServerData(viewRes) as View,
       images,
     },
     revalidate: 60 * 60 * 24 * 7, // One week

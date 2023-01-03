@@ -52,7 +52,7 @@ const UserNotificationList = (props: Props) => {
         overlayBlur={3}
       >
         {!data || data?.length === 0 ? (
-          <Text> Bạn chưa có thông báo nào cả.</Text>
+          <Text color="gray"> Bạn chưa có thông báo nào cả.</Text>
         ) : (
           <>
             <List spacing="xs" size="sm" center>

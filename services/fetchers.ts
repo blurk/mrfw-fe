@@ -108,7 +108,7 @@ export const getAllChapters = async () => {
     const res = await client.collection(COLLECTION.CHAPTER).getFullList();
     const json = parseServerData(res) as Chapter[];
 
-    return json.map((chapter) => chapter.id) as string[];
+    return json.map((chapter) => chapter.id);
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to fetch, received message ${error.message}`);

@@ -1,13 +1,13 @@
 import { Anchor, Avatar, Badge, Card, Center, createStyles, Group, Space, Text, Tooltip } from '@mantine/core';
 import { IconEye, IconUser } from '@tabler/icons';
-import Image from 'next/legacy/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Manga } from 'domains';
 import { COLLECTION, getImageUrl } from 'utils';
 import BookmarkButton from './BookmarkButton';
 import LikeButton from './LikeButton';
 
-interface Props extends Manga {
+interface Props extends Pick<Manga, 'cover' | 'id' | 'title' | 'description' | 'collectionId' | 'expand'> {
   badgeText?: string;
   accentColor?: string;
 }
@@ -21,14 +21,7 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
     <Card withBorder radius="md" className={classes.card}>
       <Card.Section>
         <Anchor component={Link} href={href} className={classes.cover}>
-          <Image
-            src={getImageUrl(collectionId, id, cover, '300x0f')}
-            alt={title}
-            layout="fill"
-            objectFit="cover"
-            objectPosition="center"
-            priority
-          />
+          <Image src={getImageUrl(collectionId, id, cover, '300x300')} alt={title} width={300} height={300} priority />
         </Anchor>
       </Card.Section>
 
@@ -121,6 +114,7 @@ const useStyles = createStyles((theme) => ({
     width: '100%',
     aspectRatio: '1',
     display: 'block',
+    overflow: 'hidden',
   },
 
   badge: {

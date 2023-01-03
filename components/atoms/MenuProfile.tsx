@@ -14,8 +14,10 @@ import {
 import Link from 'next/link';
 import Router from 'next/router';
 import client, { logout } from 'services/initPocketBase';
+import { deleteAccount } from 'services/mutator';
 import { useSession } from 'utils';
 import { useOnNewChapterAdded } from 'utils/hooks/useOnNewChapterAdded';
+import { Routes } from 'utils/routes';
 
 type Props = {};
 
@@ -29,14 +31,18 @@ const MenuProfile = ({}: Props) => {
   const handleLogoutClick = () => {
     logout();
     setUser(null);
-    Router.push('/login');
+    Router.push(Routes.LOGIN);
+  };
+
+  const handleDeleteAccountClick = () => {
+    deleteAccount(user.id);
   };
 
   useOnNewChapterAdded();
 
   if (!user) {
     return (
-      <Link href="/login" passHref>
+      <Link href={Routes.LOGIN} passHref>
         <Button variant="gradient">Đăng nhập</Button>
       </Link>
     );
@@ -67,11 +73,11 @@ const MenuProfile = ({}: Props) => {
       </Menu.Target>
 
       <Menu.Dropdown>
-        <Text component={Link} href="/manage/liked">
+        <Text component={Link} href={Routes.MANAGE_LIKED}>
           <Menu.Item icon={<IconHeart size={14} stroke={1.5} color={theme.colors.red[6]} />}>Truyện đã thích</Menu.Item>
         </Text>
 
-        <Text component={Link} href="/manage/bookmark">
+        <Text component={Link} href={Routes.MANAGE_BOOKMARK}>
           <Menu.Item icon={<IconBookmark size={14} stroke={1.5} color={theme.colors.yellow[6]} />}>
             Truyện đang theo dõi
           </Menu.Item>
@@ -82,12 +88,12 @@ const MenuProfile = ({}: Props) => {
 
         <Menu.Divider />
         <Menu.Label>Quản lý</Menu.Label>
-        <Text component={Link} href="/manage/profile">
+        <Text component={Link} href={Routes.MANAGE_PROFILE}>
           <Menu.Item icon={<IconUserCircle size={14} stroke={1.5} color={theme.colors.green[6]} />}>
             Quản lý thông tin tài khoản
           </Menu.Item>
         </Text>
-        <Text component={Link} href="/manage">
+        <Text component={Link} href={Routes.MANAGE_MANGA}>
           <Menu.Item icon={<IconBook size={14} stroke={1.5} color={theme.colors.green[6]} />}>
             Quản lý truyện của bạn
           </Menu.Item>
@@ -99,8 +105,7 @@ const MenuProfile = ({}: Props) => {
         <Menu.Divider />
         <Menu.Label>Vùng nguy hiểm</Menu.Label>
 
-        {/* TODO: add this feat later */}
-        <Menu.Item color="red" icon={<IconTrash size={14} stroke={1.5} />} disabled>
+        <Menu.Item color="red" icon={<IconTrash size={14} stroke={1.5} />} onClick={handleDeleteAccountClick}>
           Xóa tài khoản
         </Menu.Item>
       </Menu.Dropdown>

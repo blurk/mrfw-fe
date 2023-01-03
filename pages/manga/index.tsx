@@ -79,7 +79,7 @@ export const getServerSideProps = async ({ query }: GetServerSidePropsContext) =
     .map((g) => `genres~'${g}'`)
     .join(' && ');
 
-  const sort = sortBy;
+  const sort = sortBy as string;
   const filter = `(title~'${searchText}' && ${genreFilter})`;
 
   let mangaRes = null;
