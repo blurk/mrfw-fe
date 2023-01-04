@@ -38,7 +38,7 @@ const MenuProfile = ({}: Props) => {
     deleteAccount(user.id);
   };
 
-  useOnNewChapterAdded();
+  // useOnNewChapterAdded();
 
   if (!user) {
     return (
