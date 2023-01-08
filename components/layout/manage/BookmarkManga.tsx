@@ -50,7 +50,7 @@ const BookmarkManga = ({ user }: Props) => {
               </Text>
 
               <Group mt={'sm'}>
-                <BookmarkButton mangaId={manga.id} />
+                <BookmarkButton mangaId={manga.id} uploadBy={manga.upload_by} />
 
                 <Link href={'/manga/' + manga.id} passHref>
                   <Button leftIcon={<IconEye size={18} />}>Đọc</Button>

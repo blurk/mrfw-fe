@@ -16,7 +16,7 @@ import Router from 'next/router';
 import client, { logout } from 'services/initPocketBase';
 import { deleteAccount } from 'services/mutator';
 import { useSession } from 'utils';
-import { useOnNewChapterAdded } from 'utils/hooks/useOnNewChapterAdded';
+import { useOnNewRecordAdd } from 'utils/hooks/useOnNewRecordAdd';
 import { Routes } from 'utils/routes';
 
 type Props = {};
@@ -38,7 +38,7 @@ const MenuProfile = ({}: Props) => {
     deleteAccount(user.id);
   };
 
-  useOnNewChapterAdded();
+  useOnNewRecordAdd();
 
   if (!user) {
     return (

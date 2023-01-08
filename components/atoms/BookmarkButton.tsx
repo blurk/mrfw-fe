@@ -10,9 +10,10 @@ type Props = {
   mangaId: string;
   onlyIcon?: boolean;
   classes?: string;
+  uploadBy?: string;
 };
 
-const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
+const BookmarkButton = ({ mangaId, onlyIcon, classes, uploadBy }: Props) => {
   const theme = useMantineTheme();
   const { user } = useSession();
   const { mutate } = useSWRConfig();
@@ -44,7 +45,7 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
   };
 
   return onlyIcon ? (
-    <ActionIcon className={classes} aria-label="Theo dõi truyện" onClick={onClick}>
+    <ActionIcon className={classes} aria-label="Theo dõi truyện" disabled={user?.id === uploadBy} onClick={onClick}>
       <IconBookmark
         size={16}
         color={theme.colors.yellow[7]}
@@ -55,6 +56,7 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes }: Props) => {
     <Button
       variant="outline"
       color="yellow.7"
+      disabled={user?.id === uploadBy}
       onClick={onClick}
       leftIcon={<IconBookmark size={18} fill={isBookmarked ? theme.colors.yellow[7] : 'transparent'} />}
     >

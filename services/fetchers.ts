@@ -1,4 +1,4 @@
-import { Author, Chapter, ChapterList, Genre, Manga } from 'domains';
+import { Author, Chapter, ChapterList, Comment, Genre, Manga } from 'domains';
 import { Notification } from 'domains/notifications';
 import { ListResult } from 'pocketbase';
 import { COLLECTION, parseServerData } from 'utils';
@@ -120,12 +120,29 @@ export const getCurrentUserNotifications = async (userId: string) => {
   try {
     const res = await client.collection(COLLECTION.NOTIFICATIONS).getFullList(undefined, {
       filter: `of_user="${userId}"`,
-      expand: 'of_chapter',
+      expand: 'of_chapter, of_chapter.belong_to,of_manga,of_user',
+      sort: '-created',
     });
     const json = parseServerData(res) as Notification[];
 
     return json;
   } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch, received message ${error.message}`);
+    }
+  }
+};
+
+export const getMangaComments = async (mangaId: string) => {
+  try {
+    const res = await client.collection(COLLECTION.MANGAS).getOne(mangaId, {
+      expand: 'comments, comments.by',
+    });
+
+    const json = parseServerData(res);
+
+    return json.expand.comments as Comment[];
+  } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Failed to fetch, received message ${error.message}`);
     }
