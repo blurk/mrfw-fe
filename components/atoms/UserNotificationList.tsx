@@ -129,7 +129,7 @@ const UserNotificationList = (props: Props) => {
                         {item.type === 'new_comment' && (
                           <Anchor
                             component={Link}
-                            href={Routes.MANAGE_MANGA + item.of_manga}
+                            href={Routes.MANGA + item.of_manga}
                             onClick={() => onMarkAsReadClick(item.id)}
                           >
                             Truyện của bạn: {item.expand.of_manga.title} vừa có người bình luận
