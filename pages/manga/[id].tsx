@@ -1,16 +1,21 @@
 import ChapterViewer from 'components/atoms/ChapterViewer';
 import { MangaInfoCard } from 'components/atoms/MangaInfoCard';
+import CommentSection from 'components/molecules/CommentSection';
+import { Comment as CommentDomain, Manga } from 'domains';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import client from 'services/initPocketBase';
-import { Manga } from 'domains';
+import { SWRConfig } from 'swr';
 import { COLLECTION, getAuthorsName, getGenresName, getImageUrl } from 'utils';
 
 type Props = {
   mangaDetails: Manga;
+  fallback: {
+    [key: string]: CommentDomain[];
+  };
 };
 
-const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
+const PageMangaSingle: NextPage<Props> = ({ mangaDetails, fallback }) => {
   let latestChapter = undefined;
   let firstChapter = undefined;
 
@@ -37,6 +42,7 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
         status={mangaDetails.status}
         description={mangaDetails.description}
         uploadBy={mangaDetails.expand?.upload_by ? mangaDetails.expand.upload_by.name : ''}
+        uploadById={mangaDetails.upload_by}
         created={mangaDetails.created}
         updated={mangaDetails.updated}
         views={mangaDetails.expand?.view.count ?? 0}
@@ -49,6 +55,10 @@ const PageMangaSingle: NextPage<Props> = ({ mangaDetails }) => {
       />
 
       <ChapterViewer data={mangaDetails.expand?.chapters ?? []} />
+
+      <SWRConfig value={{ fallback }}>
+        <CommentSection currentMangaId={mangaDetails.id} />
+      </SWRConfig>
     </>
   );
 };
@@ -57,7 +67,7 @@ export default PageMangaSingle;
 
 export const getServerSideProps = async ({ query }: GetServerSidePropsContext) => {
   const res = await client.collection(COLLECTION.MANGAS).getOne(query.id as string, {
-    expand: 'upload_by,genres,author,chapters,comments,view',
+    expand: 'upload_by,genres,author,chapters,comments,comments.by,view',
   });
 
   const mangaDetails = JSON.parse(JSON.stringify(res)) as Manga;
@@ -65,6 +75,9 @@ export const getServerSideProps = async ({ query }: GetServerSidePropsContext) =
   return {
     props: {
       mangaDetails,
+      fallback: {
+        [`${mangaDetails.id}-comments`]: mangaDetails.expand.comments ?? [],
+      },
     },
   };
 };

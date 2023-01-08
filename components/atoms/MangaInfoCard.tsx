@@ -42,6 +42,7 @@ interface Props {
   firstChapter?: string;
   id: string;
   backgroundCover: string;
+  uploadById: string;
 }
 
 export function MangaInfoCard({
@@ -59,6 +60,7 @@ export function MangaInfoCard({
   latestChapter,
   id,
   backgroundCover,
+  uploadById,
 }: Props) {
   const { classes } = useStyles();
 
@@ -146,7 +148,7 @@ export function MangaInfoCard({
           </Button>
         </Link>
 
-        <BookmarkButton mangaId={id} />
+        <BookmarkButton mangaId={id} uploadBy={uploadById} />
         <LikeButton mangaId={id} />
       </Group>
     </Card>

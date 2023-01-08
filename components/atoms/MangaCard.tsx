@@ -7,12 +7,23 @@ import { COLLECTION, getImageUrl } from 'utils';
 import BookmarkButton from './BookmarkButton';
 import LikeButton from './LikeButton';
 
-interface Props extends Pick<Manga, 'cover' | 'id' | 'title' | 'description' | 'collectionId' | 'expand'> {
+interface Props
+  extends Pick<Manga, 'cover' | 'id' | 'title' | 'description' | 'collectionId' | 'expand' | 'upload_by'> {
   badgeText?: string;
   accentColor?: string;
 }
 
-export const MangaCard = ({ cover, id, title, description, collectionId, expand, badgeText, accentColor }: Props) => {
+export const MangaCard = ({
+  cover,
+  id,
+  title,
+  description,
+  collectionId,
+  expand,
+  badgeText,
+  accentColor,
+  upload_by,
+}: Props) => {
   const { classes } = useStyles();
 
   const href = `/manga/${id}`;
@@ -93,7 +104,7 @@ export const MangaCard = ({ cover, id, title, description, collectionId, expand,
 
           <Tooltip label="Theo dõi truyện" withArrow withinPortal>
             <span>
-              <BookmarkButton classes={classes.action} mangaId={id} onlyIcon />
+              <BookmarkButton classes={classes.action} mangaId={id} onlyIcon uploadBy={upload_by} />
             </span>
           </Tooltip>
         </Group>
