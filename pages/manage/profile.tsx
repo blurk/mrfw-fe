@@ -1,14 +1,13 @@
-import { Box, Button, FileInput, Grid, Loader, Paper, TextInput, Title } from '@mantine/core';
+import { Button, FileInput, Grid, Paper, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { showNotification } from '@mantine/notifications';
+import { IconCheck, IconAlertCircle } from '@tabler/icons';
 import AuthWrapper from 'components/atoms/AuthWrapper';
 import ClientOnly from 'components/atoms/ClientOnly';
 import FormChangePassword from 'components/form/FormChangePassword';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/legacy/image';
-import Router from 'next/router';
-import { useEffect } from 'react';
-import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { useSWRConfig } from 'swr';
 import { COLLECTION, getImageUrl, transformToFormData, useSession } from 'utils';
@@ -28,9 +27,20 @@ const ProfilePage: NextPage<Props> = ({}) => {
         await client.collection('users').update(user.id, transformToFormData({ ...data }));
         // manually revalidate
         mutate('api_user');
-        toast.success('Cập nhật thành công');
+        showNotification({
+          title: 'Thao tác thành công',
+          message: 'Thông tin của bạn đã được cập nhật thành công.',
+          color: 'teal',
+          icon: <IconCheck size={16} />,
+        });
       } catch (error) {
-        toast.error('Cập nhật thất bại');
+        showNotification({
+          title: 'Thao tác thất bại',
+          message: 'Thông tin của bạn chưa được cập nhật. Hãy thử lại xem nhé',
+          color: 'red',
+          icon: <IconAlertCircle size={16} />,
+        });
+        console.log(error);
       }
     }
   };

@@ -132,8 +132,8 @@ const UserNotificationList = (props: Props) => {
                             href={Routes.MANGA + item.of_manga}
                             onClick={() => onMarkAsReadClick(item.id)}
                           >
-                            Truyện của bạn: {item.expand.of_manga.title} vừa có người bình luận
-                            <br />
+                            {item.expand.of_comment.expand.by.name} vừa bình luận về truyện của bạn:{' '}
+                            {item.expand.of_manga.title}
                           </Anchor>
                         )}
 

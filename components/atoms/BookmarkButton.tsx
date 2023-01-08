@@ -1,6 +1,5 @@
 import { ActionIcon, Button, useMantineTheme } from '@mantine/core';
 import { IconBookmark } from '@tabler/icons';
-import toast from 'react-hot-toast';
 import { updateBookmark } from 'services/mutator';
 import { useSWRConfig } from 'swr';
 import { SWR_USER_KEY, useSession } from 'utils';
@@ -22,23 +21,18 @@ const BookmarkButton = ({ mangaId, onlyIcon, classes, uploadBy }: Props) => {
 
   const isBookmarked = user?.bookmark?.includes(mangaId);
 
-  const onClick = () => {
+  const onClick = async () => {
     if (user) {
       try {
-        toast.promise(updateBookmark(mangaId, isBookmarked, user), {
-          loading: 'Đang cập nhật danh sách theo dõi...',
-          success: () => {
-            mutate('api_user');
+        await updateBookmark(mangaId, isBookmarked, user);
+        mutate('api_user');
 
-            if (user) {
-              mutate(SWR_USER_KEY.BOOKMARK);
-            }
-
-            return isBookmarked ? 'Bỏ theo dõi thành công' : 'Đã theo dõi';
-          },
-          error: 'Có lỗi xảy ra ;_;',
-        });
-      } catch (error) {}
+        if (user) {
+          mutate(SWR_USER_KEY.BOOKMARK);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       show();
     }

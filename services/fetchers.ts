@@ -120,7 +120,7 @@ export const getCurrentUserNotifications = async (userId: string) => {
   try {
     const res = await client.collection(COLLECTION.NOTIFICATIONS).getFullList(undefined, {
       filter: `of_user="${userId}"`,
-      expand: 'of_chapter, of_chapter.belong_to,of_manga,of_user',
+      expand: 'of_chapter, of_chapter.belong_to,of_manga,of_user,of_comment,of_comment.by',
       sort: '-created',
     });
     const json = parseServerData(res) as Notification[];

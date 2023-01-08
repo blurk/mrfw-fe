@@ -75,6 +75,7 @@ export function useOnNewRecordAdd() {
               of_chapter: newChapter.id,
               of_manga: '',
               of_user: user.id,
+              of_comment: '',
               type: 'new_chapter',
             });
             mutate(SWR_USER_KEY.NOTIFICATION);
@@ -125,6 +126,7 @@ export function useOnNewRecordAdd() {
               of_chapter: '',
               of_manga: _newComment.on,
               of_user: user.id,
+              of_comment: _newComment.id,
               type: 'new_comment',
             });
             mutate(SWR_USER_KEY.NOTIFICATION);

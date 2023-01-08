@@ -1,6 +1,5 @@
 import { ActionIcon, Button, useMantineTheme } from '@mantine/core';
 import { IconHeart } from '@tabler/icons';
-import toast from 'react-hot-toast';
 import { updateLiked } from 'services/mutator';
 import { useSWRConfig } from 'swr';
 import { SWR_USER_KEY, useSession } from 'utils';
@@ -21,23 +20,18 @@ const LikeButton = ({ mangaId, onlyIcon, classes }: Props) => {
 
   const isLiked = user?.liked?.includes(mangaId);
 
-  const onClick = () => {
+  const onClick = async () => {
     if (user) {
       try {
-        toast.promise(updateLiked(mangaId, isLiked, user), {
-          loading: 'Đang cập nhật danh sách truyện thích...',
-          success: () => {
-            mutate('api_user');
+        await updateLiked(mangaId, isLiked, user);
+        mutate('api_user');
 
-            if (user) {
-              mutate(SWR_USER_KEY.LIKED);
-            }
-
-            return isLiked ? 'Bỏ thích thành công' : 'Thích thành công';
-          },
-          error: 'Có lỗi xảy ra ;_;',
-        });
-      } catch (error) {}
+        if (user) {
+          mutate(SWR_USER_KEY.LIKED);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       show();
     }

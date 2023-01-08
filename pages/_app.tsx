@@ -3,7 +3,6 @@ import { NotificationsProvider } from '@mantine/notifications';
 import { RouterTransition } from 'components/atoms/RouterTransition';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { Toaster } from 'react-hot-toast';
 import { SWRConfig } from 'swr';
 import { Layout } from '../components';
 
@@ -20,7 +19,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <RouterTransition />
           <NotificationsProvider position="top-right">
-            <Toaster />
             <Layout>
               <Component {...pageProps} />
             </Layout>
