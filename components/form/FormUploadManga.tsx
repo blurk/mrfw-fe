@@ -30,7 +30,7 @@ const getInitialValues = (data?: SWRMangaUploadFormStatus['editData']) =>
 const FormUploadManga = ({ hideDrawer }: Props) => {
   const { mutate } = useSWRConfig();
 
-  const { editData, changeDirtyStatus } = useFormState() as UseFormStateReturn<Manga>;
+  const { editData, changeDirtyStatus, reset: formStateReset } = useFormState() as UseFormStateReturn<Manga>;
 
   const { onSubmit, getInputProps, isDirty, reset } = useForm<MangaUploadRequest>({
     validate: yupResolver(uploadMangaSchema),
@@ -71,6 +71,7 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
       });
       mutate('uploaded-manga');
       reset();
+      formStateReset();
       hideDrawer();
     } catch (error) {
       showNotification({

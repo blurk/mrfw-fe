@@ -29,9 +29,9 @@ const getInitialValues = (data?: Chapter | null) =>
 const FormChapter = ({ hideDrawer, mid }: Props) => {
   const { mutate } = useSWRConfig();
 
-  const { editData, changeDirtyStatus } = useFormState() as UseFormStateReturn<Chapter>;
+  const { editData, changeDirtyStatus, reset: formStateReset } = useFormState() as UseFormStateReturn<Chapter>;
 
-  const { onSubmit, getInputProps, isDirty, reset } = useForm<ChapterRequest>({
+  const { onSubmit, getInputProps, isDirty, reset, values } = useForm<ChapterRequest>({
     validate: yupResolver(chapterSchema),
     initialValues: getInitialValues(editData),
   });
@@ -48,7 +48,18 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
       setIsAdding(true);
       // Update
       if (editData) {
+        // remove old images
+        await client.collection(COLLECTION.CHAPTER).update(editData.id, {
+          images: null,
+        });
+
+        // Then update
         await client.collection(COLLECTION.CHAPTER).update(editData.id, transformToFormData(data));
+
+        // On demand isr
+        try {
+          await fetch(`/api/revalidate?secret=${process.env.MY_SECRET_TOKEN}&cid=${editData.id}`);
+        } catch (error) {}
       } else {
         // Create
         const res = await client
@@ -78,6 +89,7 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
       });
       mutate('chapters-table');
       reset();
+      formStateReset();
       hideDrawer();
     } catch (error) {
       showNotification({

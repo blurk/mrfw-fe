@@ -8,15 +8,28 @@ import Link from 'next/link';
 import React from 'react';
 import { useFormState, UseFormStateReturn } from 'utils/hooks/useFormState';
 import ManageChaptersTable from './ChapterTable';
+import DiscardModal from './DiscardModal';
 
 type Props = { mid: string };
 
 const ChapterManagementLayout = ({ mid }: Props) => {
-  const { editData, reset } = useFormState() as UseFormStateReturn<Chapter>;
+  const { editData, isDirty, reset } = useFormState() as UseFormStateReturn<Chapter>;
 
   const [isDrawerOpen, drawerHandlers] = useDisclosure(false);
 
+  const [isModalOpen, modalHandlers] = useDisclosure(false);
+
   const handleDrawerClose = () => {
+    if (isDirty) {
+      modalHandlers.open();
+    } else {
+      drawerHandlers.close();
+      reset();
+    }
+  };
+
+  const handleDiscardModalConfirm = () => {
+    modalHandlers.close();
     drawerHandlers.close();
     reset();
   };
@@ -67,6 +80,13 @@ const ChapterManagementLayout = ({ mid }: Props) => {
         opened={isDrawerOpen}
         onClose={handleDrawerClose}
       >
+        {/* DISCARD MODAL */}
+        <DiscardModal
+          isModalOpen={isModalOpen}
+          onClose={modalHandlers.close}
+          onModalConfirm={handleDiscardModalConfirm}
+        />
+
         {/* FORM */}
         <ScrollArea type="hover" style={{ height: '80vh', width: '100%' }}>
           <FormChapter hideDrawer={drawerHandlers.close} mid={mid} />
