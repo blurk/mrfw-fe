@@ -2,7 +2,6 @@ import { Button, FileInput, MultiSelect, Select, Textarea, TextInput } from '@ma
 import { useForm, yupResolver } from '@mantine/form';
 import FileInputPreview from 'components/atoms/FileInputPreview';
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { getAuthors, getGenres } from 'services/fetchers';
 import client from 'services/initPocketBase';
 import useSWR, { useSWRConfig } from 'swr';
@@ -32,7 +31,7 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
 
   const { editData, changeDirtyStatus, reset: formStateReset } = useFormState() as UseFormStateReturn<Manga>;
 
-  const { onSubmit, getInputProps, isDirty, reset } = useForm<MangaUploadRequest>({
+  const { onSubmit, getInputProps, isDirty, reset, setFieldValue, values } = useForm<MangaUploadRequest>({
     validate: yupResolver(uploadMangaSchema),
     initialValues: getInitialValues(editData),
   });
@@ -91,9 +90,20 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
     try {
       const record = await client.collection(COLLECTION.GENERS).create({ name: newGenre });
       genresMutate([...(genres ?? []), { label: newGenre, value: record.id }]);
-      toast.success('Thêm thể loại mới thành công');
+      showNotification({
+        title: 'Thao tác thành công',
+        message: 'Thêm thể loại mới thành công!',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+      });
+      setFieldValue('genres', [...values.genres, record.id]);
     } catch (error) {
-      toast.success('Thêm thể loại mới thất bại');
+      showNotification({
+        title: 'Thao tác thất bại',
+        message: 'Thêm thể loại mới thất bại!',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     }
   };
 
@@ -105,9 +115,22 @@ const FormUploadManga = ({ hideDrawer }: Props) => {
         name: newAuthor,
       });
       authorMutate([...(authors ?? []), { label: newAuthor, value: record.id }]);
-      toast.success('Thêm tác giả mới thành công');
+
+      showNotification({
+        title: 'Thao tác thành công',
+        message: 'Thêm tác giả mới thành công!',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+      });
+
+      setFieldValue('author', [...values.author, record.id]);
     } catch (error) {
-      toast.success('Thêm tác giả mới thất bại');
+      showNotification({
+        title: 'Thao tác thất bại',
+        message: 'Thêm tác giả mới thất bại!',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     }
   };
 

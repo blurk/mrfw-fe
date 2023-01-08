@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Group, Paper, ScrollArea, Stack, Text, Textarea, Title } from '@mantine/core';
+import { Anchor, Box, Button, Divider, Group, Paper, ScrollArea, Stack, Text, Textarea, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck, IconRefresh } from '@tabler/icons';
@@ -9,6 +9,8 @@ import client from 'services/initPocketBase';
 import { COLLECTION, relativeTimeFromNow, useSession } from 'utils';
 import useSWR from 'swr';
 import { getMangaComments } from 'services/fetchers';
+import Link from 'next/link';
+import { Routes } from 'utils/routes';
 
 type Props = {
   currentMangaId: string;
@@ -105,11 +107,23 @@ const CommentSection = ({ currentMangaId }: Props) => {
             minRows={2}
             maxRows={6}
             withAsterisk
+            disabled={!user}
             {...getInputProps('comment')}
           />
-          <Button type="submit" mt="sm" ml="auto" display="block" loading={isCommenting}>
-            Bình luận
-          </Button>
+
+          {user ? (
+            <Button type="submit" mt="sm" ml="auto" display="block" loading={isCommenting} disabled={!user}>
+              Bình luận
+            </Button>
+          ) : (
+            <Text ml="auto" mt="sm" w="max-content" maw="100%">
+              Hãy{' '}
+              <Anchor component={Link} href={Routes.LOGIN}>
+                đăng nhập
+              </Anchor>{' '}
+              để bình luận nhé
+            </Text>
+          )}
         </form>
       </Box>
     </Paper>

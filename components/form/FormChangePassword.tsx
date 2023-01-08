@@ -1,12 +1,14 @@
 import { Button, Group, Paper, PasswordInput, TextInput, Title } from '@mantine/core';
 import { useForm, yupResolver } from '@mantine/form';
-import { useDisclosure, useTimeout } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import Router from 'next/router';
-import toast from 'react-hot-toast';
 import client, { logout } from 'services/initPocketBase';
 import { ChangePasswordRequest } from 'domains';
 import { COLLECTION, updatePassword, useSession } from 'utils';
 import FormInputRequestEmail from './FormInputRequestEmail';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
+import { showNotification } from '@mantine/notifications';
+import { Routes } from 'utils/routes';
 
 type Props = {};
 
@@ -14,7 +16,6 @@ const FormChangePassword = (props: Props) => {
   const { user, setUser } = useSession();
 
   const [visible, { toggle }] = useDisclosure(false);
-  const { start } = useTimeout(() => Router.push('/login'), 1000);
 
   const { onSubmit, getInputProps } = useForm<ChangePasswordRequest>({
     validate: yupResolver(updatePassword),
@@ -25,14 +26,25 @@ const FormChangePassword = (props: Props) => {
     try {
       await client.collection(COLLECTION.USERS).confirmPasswordReset(data.token, data.password, data.passwordConfirm);
 
-      toast.success('Cập nhật thành công');
-      logout();
-      setUser(null);
-      toast('Vui lòng đăng nhập lại');
-
-      start();
+      showNotification({
+        title: 'Thao tác thành công',
+        message: 'Thông tin của bạn đã được cập nhật thành công. Bạn sẽ được đưa trở về màn hình đăng nhập',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+        autoClose: 2000,
+        onClose: () => {
+          logout();
+          setUser(null);
+          Router.push(Routes.LOGIN);
+        },
+      });
     } catch (error) {
-      toast.error('Cập nhật thất bại');
+      showNotification({
+        title: 'Thao tác thất bại',
+        message: 'Thông tin của bạn chưa được cập nhật. Hãy thử lại xem nhé',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
     }
   };
 
@@ -41,9 +53,19 @@ const FormChangePassword = (props: Props) => {
       try {
         await client.collection(COLLECTION.USERS).requestPasswordReset(user.email);
 
-        toast.success('Gửi mail thành công! Nhớ kiểm tra cả inbox lẫn spam nhé');
+        showNotification({
+          title: 'Thao tác thành công',
+          message: 'Gửi mail thành công! Nhớ kiểm tra cả inbox lẫn spam nhé',
+          color: 'teal',
+          icon: <IconCheck size={16} />,
+        });
       } catch (err) {
-        toast.error('Gửi mail thất bại');
+        showNotification({
+          title: 'Thao tác thất bại',
+          message: 'Gửi mail thất bại. Hãy thử lại xem nhé',
+          color: 'red',
+          icon: <IconAlertCircle size={16} />,
+        });
       }
     }
   };

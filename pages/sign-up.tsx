@@ -3,10 +3,11 @@ import FormSignUp from 'components/form/FormSignUp';
 import Head from 'next/head';
 import Router from 'next/router';
 import React, { useCallback, useState } from 'react';
-import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { SignUpRequest } from 'domains';
 import { COLLECTION } from 'utils';
+import { showNotification } from '@mantine/notifications';
+import { IconCheck, IconAlertCircle } from '@tabler/icons';
 
 type Props = {};
 
@@ -19,11 +20,21 @@ const SignUp = (props: Props) => {
     try {
       await client.collection(COLLECTION.USERS).create({ ...data });
 
-      toast.success('Đăng ký thành công ^^');
+      showNotification({
+        title: 'Đăng ký thành công ^^',
+        message: 'Bạn sẽ được đưa về trang đăng nhập',
+        color: 'teal',
+        icon: <IconCheck size={16} />,
+      });
 
       Router.push('/login');
     } catch (error) {
-      toast.error('Đăng ký thất bại');
+      showNotification({
+        title: 'Đăng nhập thất bại :(',
+        message: 'Hãy thử lại xem nhé',
+        color: 'red',
+        icon: <IconAlertCircle size={16} />,
+      });
       console.log(error);
     } finally {
       setVisible(false);

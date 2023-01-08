@@ -4,10 +4,11 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Router from 'next/router';
 import { useCallback, useState } from 'react';
-import toast from 'react-hot-toast';
 import client from 'services/initPocketBase';
 import { LoginRequest, User } from 'domains';
 import { useSession } from 'utils';
+import { showNotification } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons';
 
 type Props = {};
 
@@ -25,10 +26,21 @@ const Login: NextPage<Props> = ({}) => {
 
         setUser(user as User);
 
-        toast.success('Đăng nhập thành công ^^');
+        showNotification({
+          title: 'Đăng nhập thành công ^^',
+          message: 'Bạn sẽ được đưa về trang chủ',
+          color: 'teal',
+          icon: <IconCheck size={16} />,
+        });
+
         Router.push('/');
       } catch (error) {
-        toast.error('Đăng nhập thất bại :(');
+        showNotification({
+          title: 'Đăng nhập thất bại :(',
+          message: 'Hãy thử lại xem nhé',
+          color: 'red',
+          icon: <IconAlertCircle size={16} />,
+        });
         console.log(error);
       } finally {
         setVisible(false);
