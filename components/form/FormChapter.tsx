@@ -80,6 +80,11 @@ const FormChapter = ({ hideDrawer, mid }: Props) => {
             }
           })
           .catch(console.error);
+
+        // On demand isr
+        try {
+          await fetch(`/api/revalidate?secret=${process.env.MY_SECRET_TOKEN}&cid=${res.id}`);
+        } catch (error) {}
       }
       showNotification({
         title: 'Thao tác thành công',
