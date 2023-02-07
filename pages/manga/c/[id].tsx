@@ -1,7 +1,17 @@
-import { Alert, Box, Button, Group, Title } from '@mantine/core';
-import { IconAlertCircle, IconArrowBack, IconChevronLeft, IconChevronRight } from '@tabler/icons';
+import { Alert, Box, Button, Group, Stack, Text, Title } from '@mantine/core';
+import { useLocalStorage, useWindowScroll } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
+import {
+  IconAlertCircle,
+  IconArrowBack,
+  IconArrowDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconQuestionMark
+} from '@tabler/icons';
 import ScrollToTop from 'components/atoms/ScrollToTop';
 import ChapterSelection from 'components/molecules/ChapterSelection';
+import { Chapter, View } from 'domains';
 import { GetStaticProps, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import Image from 'next/image';
@@ -11,8 +21,8 @@ import { ParsedUrlQuery } from 'querystring';
 import { Fragment, useEffect } from 'react';
 import { getAllChapters } from 'services/fetchers';
 import client from 'services/initPocketBase';
-import { Chapter, View } from 'domains';
 import { COLLECTION, getImageUrl, parseServerData } from 'utils';
+import useOnUserLeaveChapterPage from 'utils/hooks/useOnUserLeaveChapterPage';
 import { Routes } from 'utils/routes';
 
 type Props = {
@@ -39,6 +49,38 @@ const Chapter: NextPage<Props> = ({ chapterDetails, chapterSelection, prevChapte
       clearTimeout(timeoutId);
     };
   }, [chapterDetails.id, chapterDetails.expand, view.id, view.count]);
+
+  useOnUserLeaveChapterPage(chapterDetails.id);
+
+  const [, scrollTo] = useWindowScroll();
+  const [readHistory] = useLocalStorage<{ [key: string]: number }>({
+    key: 'readHistory',
+  });
+
+  useEffect(() => {
+    if (readHistory && readHistory[chapterDetails.id]) {
+      showNotification({
+        title: 'Đọc tiếp?',
+        message: (
+          <Stack spacing={0} align="start">
+            <Text size="sm" color="dimmed">
+              Tiếp tục câu chuyện còn đang dang dở.
+            </Text>
+            <Button
+              mt="sm"
+              size="xs"
+              color="teal"
+              onClick={() => scrollTo({ y: readHistory[chapterDetails.id] })}
+              leftIcon={<IconArrowDown size={16} />}
+            >
+              Tiếp tục
+            </Button>
+          </Stack>
+        ),
+        icon: <IconQuestionMark size={16} />,
+      });
+    }
+  }, [chapterDetails.id, readHistory, scrollTo]);
 
   const pageName = `${chapterDetails.expand?.belong_to.title ?? ''}: ${chapterDetails.name}`;
 
